@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    This launch by default tries to start system in `012` world providing all necessary parameters.
-    However, it lacks GAZEBO_MODEL_PATH env variable update
--->
 <launch>
     <!-- === ARGUMENTS ========================================================================== -->
     <arg name="people_sim" default="true"/>
@@ -26,7 +22,7 @@
 
     <arg name="publish_goal" default="false"/>
     <arg name="publish_goal_delay" default="$(eval {'titanium': '50', 'steel': '50', 'iron': '15'}.get(arg('robot_type'), '15'))"/>
-    <arg name="goal_file" default="$(find tiago_social_experiments)/config/012_goal.yaml"/>
+    <arg name="goal_file" default="provide_a_valid_yaml_with_sim_PoseStamped"/>
 
     <!--
         Related to HuBeRo bringup - set to true if HuBeRo actors static map should be shared with robot.
@@ -45,12 +41,11 @@
 
     <arg name="pose_sim" default="-x 0.2 -y -1.63 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
     <arg name="map_frame" default="map"/>
-    <arg name="map_bounds" default="[-2.49, 5.86, -2.74, 10.30]"/>
 
-    <arg name="world_file_wo_people" default="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
-    <arg name="world_file_people" default="$(find tiago_sim_integration)/worlds/lab_012_v2_actor.world"/>
-    <arg name="map_file" default="$(find tiago_sim_integration)/maps/012_sim_localization/map.yaml"/>
-    <arg name="localization_config" default="$(find tiago_social_experiments)/config/012_pose_hard.yaml"/>
+    <arg name="world_file_wo_people" default="$(find gazebo_ros)/worlds/empty.world"/>
+    <arg name="world_file_people" default="$(find gazebo_ros)/worlds/empty.world"/>
+    <arg name="map_file" default="provide_a_valid_YAML_with_sim_map_metadata"/>
+    <arg name="localization_config" default="provide_a_valid_YAML_with_initial_sim_pose_for_AMCL"/>
 
     <!-- === NODES ============================================================================== -->
     <group if="$(arg people_sim)">
@@ -81,36 +76,23 @@
         </include>
     </group>
 
-    <include file="$(find tiago_social_bringup)/launch/gazebo_spawn.launch">
+    <include file="$(find tiago_social_bringup_sim)/launch/gazebo_spawn.launch">
         <arg name="gzpose" value="$(arg pose_sim)"/>
         <arg name="robot" value="$(arg robot_type)"/>
     </include>
 
-    <include file="$(find tiago_social_navigation)/launch/gazebo_nav_base.launch" if="$(arg navigation_launch)">
-        <arg name="state" value="$(arg nav_state)"/>
-        <arg name="map" if="$(arg people_sim)" value="none"/>
-        <arg name="map" unless="$(arg people_sim)" value="$(arg map_file)"/>
+    <include file="$(find tiago_social_experiments)/launch/scenario_base.launch">
+        <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="external_map" value="$(arg people_sim)"/>
+        <arg name="map_file" value="$(arg map_file)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
         <arg name="localization_config" value="$(arg localization_config)"/>
-        <arg name="benchmark" value="$(arg navigation_benchmark)"/>
+        <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
+        <arg name="perception" value="$(arg perception)"/>
+        <arg name="perception_viz" value="$(arg perception_viz)"/>
+        <arg name="perception_input_topic" value="$(arg perception_input_topic)"/>
+        <arg name="publish_goal" value="$(arg publish_goal)"/>
+        <arg name="publish_goal_delay" value="$(arg publish_goal_delay)"/>
+        <arg name="goal_file" value="$(arg goal_file)"/>
     </include>
-
-    <node pkg="rviz" name="rviz_nav" type="rviz" output="screen" args="-d $(find tiago_social_navigation)/rviz/tiago_navigation.rviz"></node>
-
-    <group if="$(arg people_sim)">
-        <group if="$(arg perception)">
-            <include file="$(find tiago_social_perception)/launch/tiago_spencer_tracking.launch">
-                <arg name="visualization" value="$(arg perception_viz)"/>
-                <arg name="tracks_topic" value="$(arg perception_input_topic)"/>
-            </include>
-        </group>
-    </group>
-
-    <node pkg="rostopic" type="rostopic" name="rostopic" if="$(arg publish_goal)" launch-prefix="bash -c 'sleep $(arg publish_goal_delay); $0 $@' " output="screen"
-        args="pub /move_base_simple/goal geometry_msgs/PoseStamped --latch --file=$(arg goal_file)"
-    />
-
-    <node pkg="rqt_reconfigure" name="rqt_reconfigure" type="rqt_reconfigure"></node>
-
-    <node pkg="rqt_plot" name="rqt_plot" type="rqt_plot"></node>
 </launch>
