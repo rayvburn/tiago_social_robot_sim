@@ -4,6 +4,15 @@ Packages for social navigation experiments based on a TIAGo robot. This reposito
 
 ## Run
 
+Typical usage is, e.g.:
+
+```sh
+roslaunch tiago_social_experiments_sim aws_hospital.launch navigation_benchmark:=false local_planner:=hateb
+```
+
+### Advanced usage
+
+Advanced usage can involve the following.
 Run HuBeRo example with sourced TIAGo packages (to spawn the robot in simulation):
 
 Start Gazebo simulation:
