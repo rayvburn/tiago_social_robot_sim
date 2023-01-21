@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This launch by default tries to start system in `012` world providing all necessary parameters.
+    However, it lacks GAZEBO_MODEL_PATH env variable update
+-->
+<launch>
+    <!-- === ARGUMENTS ========================================================================== -->
+    <arg name="people_sim" default="true"/>
+    <arg name="people_sim_viz" default="false"/>
+
+    <!-- (titanium|steel|iron) -->
+    <arg name="robot_type" default="titanium"/>
+
+    <arg name="perception" default="false"/>
+    <arg name="perception_viz" default="false"/>
+    <arg name="perception_input_topic" default="/spencer/perception/tracked_persons"/>
+
+    <!-- Set to true if navigation modules should be launched -->
+    <arg name="navigation_launch" default="true"/>
+
+    <!-- Set to true if navigation benchmark should be enabled. Latest log will be overwritten! -->
+    <arg name="navigation_benchmark" default="true"/>
+
+    <arg name="local_planner" default="hubero"/>
+    <arg name="nav_state" default="localization"/>
+
+    <arg name="publish_goal" default="false"/>
+    <arg name="publish_goal_delay" default="$(eval {'titanium': '50', 'steel': '50', 'iron': '15'}.get(arg('robot_type'), '15'))"/>
+    <arg name="goal_file" default="$(find tiago_social_experiments)/config/012_goal.yaml"/>
+
+    <!--
+        Related to HuBeRo bringup - set to true if HuBeRo actors static map should be shared with robot.
+        Should be set to false if HuBeRo framework is not used (has effect only if `people_sim` is true)
+    -->
+    <arg name="shared_map" default="true"/>
+
+    <!--
+        `tf_world_map` should be computed using element-wise subtraction:
+        robot_sim_init_pose - robot_map_init_pose
+        Example inputs and result below:
+        robot sim start: -x 1.7 -y 5.6 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708
+        robot init pose: x 3.587 y: 9.158 Y: -1.733
+    -->
+    <arg name="tf_world_map" default="-1.88 -3.55 +0.00 +0.00 +0.00 -0.1622"/>
+
+    <arg name="pose_sim" default="-x 0.2 -y -1.63 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
+    <arg name="map_frame" default="map"/>
+    <arg name="map_bounds" default="[-2.49, 5.86, -2.74, 10.30]"/>
+
+    <arg name="world_file_wo_people" default="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+    <arg name="world_file_people" default="$(find tiago_sim_integration)/worlds/lab_012_v2_actor.world"/>
+    <arg name="map_file" default="$(find tiago_sim_integration)/maps/012_sim_localization/map.yaml"/>
+    <arg name="localization_config" default="$(find tiago_social_experiments)/config/012_pose_hard.yaml"/>
+
+    <!-- === NODES ============================================================================== -->
+    <group if="$(arg people_sim)">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/example.launch">
+            <arg name="world" value="custom"/> <!-- ignores pre-defined bringup config -->
+            <arg name="world_file" value="$(arg world_file_people)"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="rviz" value="$(arg people_sim_viz)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+        </include>
+        <!--
+            NOTE: ROS interfaces for each actor must be launched for specific scenarios.
+            Also, one should not use `people_sim:=true` without at least specyfing static TF.
+            Otherwise robot will quickly start flickering.
+        -->
+    </group>
+    <group unless="$(arg people_sim)">
+        <include file="$(find gazebo_ros)/launch/empty_world.launch">
+            <arg name="world_name" value="$(arg world_file_wo_people)"/>
+            <arg name="paused" value="false"/>
+            <arg name="use_sim_time" value="true"/>
+            <arg name="gui" value="true"/>
+            <arg name="headless" value="false"/>
+            <arg name="debug" value="false"/>
+            <arg name="verbose" value="true"/>
+        </include>
+    </group>
+
+    <include file="$(find tiago_social_bringup)/launch/gazebo_spawn.launch">
+        <arg name="gzpose" value="$(arg pose_sim)"/>
+        <arg name="robot" value="$(arg robot_type)"/>
+    </include>
+
+    <include file="$(find tiago_social_navigation)/launch/gazebo_nav_base.launch" if="$(arg navigation_launch)">
+        <arg name="state" value="$(arg nav_state)"/>
+        <arg name="map" if="$(arg people_sim)" value="none"/>
+        <arg name="map" unless="$(arg people_sim)" value="$(arg map_file)"/>
+        <arg name="local_planner" value="$(arg local_planner)"/>
+        <arg name="localization_config" value="$(arg localization_config)"/>
+        <arg name="benchmark" value="$(arg navigation_benchmark)"/>
+    </include>
+
+    <node pkg="rviz" name="rviz_nav" type="rviz" output="screen" args="-d $(find tiago_social_navigation)/rviz/tiago_navigation.rviz"></node>
+
+    <group if="$(arg people_sim)">
+        <group if="$(arg perception)">
+            <include file="$(find tiago_social_perception)/launch/tiago_spencer_tracking.launch">
+                <arg name="visualization" value="$(arg perception_viz)"/>
+                <arg name="tracks_topic" value="$(arg perception_input_topic)"/>
+            </include>
+        </group>
+    </group>
+
+    <node pkg="rostopic" type="rostopic" name="rostopic" if="$(arg publish_goal)" launch-prefix="bash -c 'sleep $(arg publish_goal_delay); $0 $@' " output="screen"
+        args="pub /move_base_simple/goal geometry_msgs/PoseStamped --latch --file=$(arg goal_file)"
+    />
+
+    <node pkg="rqt_reconfigure" name="rqt_reconfigure" type="rqt_reconfigure"></node>
+
+    <node pkg="rqt_plot" name="rqt_plot" type="rqt_plot"></node>
+</launch>

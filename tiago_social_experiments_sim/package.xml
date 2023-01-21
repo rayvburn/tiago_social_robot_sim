@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tiago_social_experiments_sim</name>
+  <version>0.0.0</version>
+  <description>The tiago_social_experiments_sim package</description>
+  <author email="chromedivizer@gmail.com">Jarosław Karwowski</author>
+  <maintainer email="chromedivizer@gmail.com">Jarosław Karwowski</maintainer>
+  <license>BSD-3</license>
+  <url type="website">https://github.com/rayvburn/tiago_social_robot</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>tiago_2dnav_gazebo</build_depend>
+  <build_depend>tiago_gazebo</build_depend>
+
+  <build_export_depend>tiago_2dnav_gazebo</build_export_depend>
+  <build_export_depend>tiago_gazebo</build_export_depend>
+
+  <exec_depend>tiago_2dnav_gazebo</exec_depend>
+  <exec_depend>tiago_gazebo</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>
