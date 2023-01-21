@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <!-- === ARGUMENTS ========================================================================== -->
-    <arg name="people_sim" default="true"/>
+    <arg name="people_sim" default="false"/>
     <arg name="people_sim_viz" default="false"/>
 
     <!-- (titanium|steel|iron) -->
     <arg name="robot_type" default="titanium"/>
 
-    <arg name="perception" default="false"/>
+    <arg name="perception_launch" default="false"/>
     <arg name="perception_viz" default="false"/>
     <arg name="perception_input_topic" default="/spencer/perception/tracked_persons"/>
 
     <!-- Set to true if navigation modules should be launched -->
     <arg name="navigation_launch" default="true"/>
 
-    <!-- Set to true if navigation benchmark should be enabled. Latest log will be overwritten! -->
-    <arg name="navigation_benchmark" default="true"/>
+    <!-- Set to true if navigation benchmark should be enabled -->
+    <arg name="navigation_benchmark" default="false"/>
 
-    <arg name="local_planner" default="hubero"/>
+    <arg name="global_planner" default="navfn"/>
+    <arg name="local_planner" default="teb"/>
     <arg name="nav_state" default="localization"/>
 
+    <!-- Run debugging tools -->
+    <arg name="run_nav_viz" default="false"/>
+    <arg name="run_reconfigure" default="false"/>
+    <arg name="run_plot" default="false"/>
+
+    <!-- Automatic publishing of navigation goal -->
     <arg name="publish_goal" default="false"/>
     <arg name="publish_goal_delay" default="$(eval {'titanium': '50', 'steel': '50', 'iron': '15'}.get(arg('robot_type'), '15'))"/>
     <arg name="goal_file" default="provide_a_valid_yaml_with_sim_PoseStamped"/>
@@ -83,16 +90,22 @@
 
     <include file="$(find tiago_social_experiments)/launch/scenario_base.launch">
         <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="external_map" value="$(arg people_sim)"/>
         <arg name="map_file" value="$(arg map_file)"/>
+        <arg name="global_planner" value="$(arg global_planner)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
         <arg name="localization_config" value="$(arg localization_config)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
-        <arg name="perception" value="$(arg perception)"/>
+        <arg name="perception_launch" value="$(arg perception_launch)"/>
         <arg name="perception_viz" value="$(arg perception_viz)"/>
         <arg name="perception_input_topic" value="$(arg perception_input_topic)"/>
         <arg name="publish_goal" value="$(arg publish_goal)"/>
         <arg name="publish_goal_delay" value="$(arg publish_goal_delay)"/>
         <arg name="goal_file" value="$(arg goal_file)"/>
+        <!-- debugging tools -->
+        <arg name="run_nav_viz" value="$(arg run_nav_viz)"/>
+        <arg name="run_reconfigure" value="$(arg run_reconfigure)"/>
+        <arg name="run_plot" value="$(arg run_plot)"/>
     </include>
 </launch>
