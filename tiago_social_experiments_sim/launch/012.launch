@@ -21,7 +21,7 @@
     <arg name="nav_state" default="localization"/>
 
     <arg name="publish_goal" default="true"/>
-    <arg name="goal_file" value="$(find tiago_social_experiments)/config/012_goal.yaml"/>
+    <arg name="goal_file" value="$(find tiago_social_experiments_sim)/config/012_goal.yaml"/>
 
     <arg name="shared_map" default="true"/>
     <arg name="tf_world_map" value="-1.88 -3.55 +0.00 +0.00 +0.00 -0.1622"/>
@@ -33,7 +33,7 @@
     <env name="GAZEBO_MODEL_PATH" value="$(find tiago_sim_integration)/models:$(optenv GAZEBO_MODEL_PATH)"/>
 
     <!-- === NODES ============================================================================== -->
-    <include file="$(find tiago_social_experiments)/launch/scenario_base.launch">
+    <include file="$(find tiago_social_experiments_sim)/launch/scenario_base.launch">
         <arg name="people_sim" value="$(arg people_sim)"/>
         <arg name="people_sim_viz" value="$(arg people_sim_viz)"/>
 
@@ -54,16 +54,15 @@
         <arg name="pose_sim" if="$(eval scenario == 'short')" value="-x 1.729204 -y -0.868255 -z -0.003 -R 0.0 -P 0.0 -Y -2.081408"/>
         <arg name="pose_sim" if="$(eval scenario == 'hard')" value="-x 0.2 -y -1.63 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
 
-        <arg name="localization_config" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments)/config/012_pose_full.yaml"/>
-        <arg name="localization_config" if="$(eval scenario == 'hard')" value="$(find tiago_social_experiments)/config/012_pose_hard.yaml"/>
-        <arg name="localization_config" if="$(eval scenario == 'short')" value="$(find tiago_social_experiments)/config/012_pose_short.yaml"/>
+        <arg name="localization_config" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments_sim)/config/012_pose_full.yaml"/>
+        <arg name="localization_config" if="$(eval scenario == 'hard')" value="$(find tiago_social_experiments_sim)/config/012_pose_hard.yaml"/>
+        <arg name="localization_config" if="$(eval scenario == 'short')" value="$(find tiago_social_experiments_sim)/config/012_pose_short.yaml"/>
 
         <arg name="shared_map" value="$(arg shared_map)"/>
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>
 
         <arg name="map_file" value="$(arg map_file)"/>
         <arg name="map_frame" value="$(arg map_frame)"/>
-        <arg name="map_bounds" value="$(arg map_bounds)"/>
 
         <arg name="goal_file" value="$(arg goal_file)"/>
     </include>
