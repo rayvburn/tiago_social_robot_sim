@@ -21,6 +21,8 @@
     <arg name="local_planner" default="teb"/>
     <arg name="nav_state" default="localization"/>
 
+    <arg name="narrow_laser_range" default="true"/>
+
     <!-- Run debugging tools -->
     <arg name="run_nav_viz" default="false"/>
     <arg name="run_reconfigure" default="false"/>
@@ -90,6 +92,7 @@
 
     <include file="$(find tiago_social_bringup)/launch/nav_perception_bringup.launch">
         <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="narrow_laser_range" value="$(arg narrow_laser_range)"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="external_map" value="$(arg people_sim)"/>
         <arg name="map_file" value="$(arg map_file)"/>
