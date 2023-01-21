@@ -10,14 +10,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>tiago_2dnav_gazebo</build_depend>
-  <build_depend>tiago_gazebo</build_depend>
-
-  <build_export_depend>tiago_2dnav_gazebo</build_export_depend>
-  <build_export_depend>tiago_gazebo</build_export_depend>
-
-  <exec_depend>tiago_2dnav_gazebo</exec_depend>
-  <exec_depend>tiago_gazebo</exec_depend>
+  <exec_depend>tiago_social_bringup</exec_depend>
+  <exec_depend>tiago_social_bringup_sim</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

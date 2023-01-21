@@ -10,14 +10,18 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>tiago_2dnav_gazebo</build_depend>
-  <build_depend>tiago_gazebo</build_depend>
-
-  <build_export_depend>tiago_2dnav_gazebo</build_export_depend>
-  <build_export_depend>tiago_gazebo</build_export_depend>
-
-  <exec_depend>tiago_2dnav_gazebo</exec_depend>
+  <exec_depend>image_proc</exec_depend>
+  <exec_depend>pal_navigation_sm</exec_depend>
+  <exec_depend>pal_gazebo_worlds</exec_depend>
   <exec_depend>tiago_gazebo</exec_depend>
+  <exec_depend>tiago_laser_sensors</exec_depend>
+  <exec_depend>tiago_gazebo</exec_depend>
+
+  <!-- only for non-`public_sim` -->
+  <!--
+  <exec_depend>pal_loc_measure</exec_depend>
+  <exec_depend>pal_pcl_points_throttle_and_filter</exec_depend>
+  -->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
