@@ -88,7 +88,7 @@
         <arg name="robot" value="$(arg robot_type)"/>
     </include>
 
-    <include file="$(find tiago_social_experiments)/launch/scenario_base.launch">
+    <include file="$(find tiago_social_bringup)/launch/nav_perception_bringup.launch">
         <arg name="nav_state" value="$(arg nav_state)"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="external_map" value="$(arg people_sim)"/>
