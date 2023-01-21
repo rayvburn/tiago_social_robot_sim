@@ -1,0 +1,9 @@
+# HuBeRo provides dynamic human actors
+- git: {local-name: hubero, uri: 'https://github.com/rayvburn/hubero.git', version: 'task-request-ros-api-get-name-method'}
+
+# worlds used in experiments
+- git: {local-name: tiago_sim_integration, uri: 'https://github.com/rayvburn/tiago_sim_integration.git', version: '012-hubero-integration'}
+- git: {local-name: aws-robomaker-hospital-world, uri: 'https://github.com/rayvburn/aws-robomaker-hospital-world.git', version: 'ros1-hubero'}
+# You'll probably need to install dependencies of the `aws-robomaker-hospital-world`:
+# sudo apt install python3-docopt python3-requests python3-lxml
+# NOTE: upstream is https://github.com/aws-robotics/aws-robomaker-hospital-world.git@ros1
