@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- based on `tiago_simulation/tiago_2dnav_gazebo/launch/tiago_navigation.launch` -->
+<launch>
+	<!-- === ARGUMENTS ========================================================================== -->
+    <!-- this should be set to true unless you have an access to PAL 'private' (?) repos -->
+	<arg name="public_sim" default="true"/>
+    <!-- Namespace of the robot, may be empty for a single robot, but must be defined for multiple (see 'multi') -->
+    <arg name="namespace" default="/"/>
+
+    <!-- Specific robot model configuration -->
+	<arg name="robot"  default="titanium"/>
+	<arg name="arm"  default="$(eval {'iron': False}.get(arg('robot'), True))"/>
+	<arg name="end_effector"  default="$(eval {'iron': 'false', 'steel': 'pal-gripper', 'titanium': 'pal-hey5'}.get(arg('robot'), 'pal-gripper'))"/>
+	<arg name="ft_sensor"  default="$(eval {'titanium': 'schunk-ft'}.get(arg('robot'), 'false'))"/>
+	<arg name="laser_model"  default="sick-571"/>
+	<arg name="camera_model"  default="orbbec-astra"/>
+    
+    <!-- Whether to tuck arm at init -->
+	<arg name="tuck_arm"  default="true"/>
+    <!-- Affects where the robot is placed in -->
+	<arg name="lost"   default="false"/>
+
+	<!-- initial_pose_a: -0.000729, initial_pose_x: -0.000033, initial_pose_y: 0.000132} -->
+	<arg name="gzpose" default="-x 0.0  -y   0.0 -z  0.0   -R 0.0 -P 0.0 -Y  0.0" unless="$(arg lost)"/>
+	<arg name="gzpose" default="-x 0.78 -y -11.1 -z -0.003 -R 0.0 -P 0.0 -Y 70.0" if="$(arg lost)"/>
+
+	<!-- NOTE: related to rviz configuration -->
+	<arg name="sim_sufix" value="_public_sim"     if="$(arg public_sim)"/>
+	<arg name="sim_sufix" value=""                unless="$(arg public_sim)"/>
+
+	<arg name="use_dynamic_footprint" default="false"/>
+	<arg name="use_moveit_camera" default="false"/>
+
+    <!-- Argument that allows to spawn multiple robots in a single world, requires non-empty 'namespace' -->
+	<arg name="multi" default=""/>
+
+    <!-- === ENV VARIABLES ====================================================================== -->
+	<!-- NOTE: internals from $(find pal_gazebo_worlds)/launch/pal_gazebo.launch -->
+	<env name="GAZEBO_MODEL_PATH" value="$(find tiago_gazebo)/models:$(find pal_gazebo_worlds)/../pal_gazebo_worlds_private/models:$(find pal_gazebo_worlds)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+	<env name="GAZEBO_RESOURCE_PATH" value="$(find tiago_gazebo):$(find pal_gazebo_worlds)/../pal_gazebo_worlds_private:$(find pal_gazebo_worlds):$(optenv GAZEBO_RESOURCE_PATH)"/>
+
+	<env name="LC_NUMERIC" value="C" />
+
+	<!-- === NODES ============================================================================== -->
+	<group ns="$(arg namespace)">
+		<!-- NOTE: necessary internals from $(find tiago_gazebo)/launch/tiago_gazebo.launch -->
+		<!-- NOTE: do not start up a new world -->
+
+		<!-- spawn robot in simulation -->
+		<include file="$(find tiago_gazebo)/launch/tiago_spawn.launch">
+			<arg name="arm" value="$(arg arm)"/>
+			<arg name="end_effector" value="$(arg end_effector)"/>
+			<arg name="ft_sensor" value="$(arg ft_sensor)"/>
+			<arg name="laser_model" value="$(arg laser_model)"/>
+			<arg name="camera_model" value="$(arg camera_model)"/>
+			<arg name="multi" value="$(arg multi)"/>
+			<arg name="gzpose" value="$(arg gzpose)"/>
+		</include>
+
+		<!-- bring up simulation of robot -->
+		<include file="$(find tiago_gazebo)/launch/simulation_tiago_bringup.launch">
+			<arg name="arm" value="$(arg arm)"/>
+			<arg name="end_effector" value="$(arg end_effector)"/>
+			<arg name="ft_sensor" value="$(arg ft_sensor)"/>
+			<arg name="laser_model" value="$(arg laser_model)"/>
+			<arg name="camera_model" value="$(arg camera_model)"/>
+			<arg name="public_sim"  value="$(arg public_sim)"/>
+			<arg name="use_moveit_camera" value="$(arg use_moveit_camera)"/>
+			<arg name="use_dynamic_footprint" value="$(arg use_dynamic_footprint)"/>
+		</include>
+
+		<!-- point cloud throttle and filter -->
+		<group unless="$(arg public_sim)">
+            <include file="$(find pal_pcl_points_throttle_and_filter)/launch/throttle_filtering_points.launch">
+                <arg name="cloud"  value="/xtion/depth_registered/points"/>
+            </include>
+		</group>
+
+        <!-- initialize robot with tuck_arm -->
+		<group if="$(arg tuck_arm)">
+	  		<node name="tuck_arm" pkg="tiago_gazebo" type="tuck_arm.py" output="screen"/>
+		</group>
+
+        <!-- image processing -->
+		<node name="image_proc" pkg="image_proc" type="image_proc" ns="xtion/rgb"/>
+	</group>
+
+	<group unless="$(arg public_sim)">
+		<include file="$(find pal_loc_measure)/launch/pal_loc_measure.launch">
+			<arg name="training" value="False"/>
+		</include>
+	</group>
+
+	<!-- pointcloud to laserscan-->
+	<group if="$(arg public_sim)">
+		<include file="$(find tiago_laser_sensors)/launch/rgbd_cloud_laser.launch">
+			<arg name="cloud" value="/xtion/depth_registered/points"/>
+		</include>
+	</group>
+</launch>
