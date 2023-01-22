@@ -66,7 +66,7 @@
         <arg name="world_file_people" if="$(arg people_lite)" value="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
 
         <arg name="pose_sim" if="$(eval scenario == 'normal')" value="-x -3.2 -y 2.3 -z -0.003 -R 0.0 -P 0.0 -Y -3.1415"/>
-        <arg name="localization_config" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_pose_normal.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_pose_normal.yaml"/>
 
         <arg name="shared_map" value="$(arg shared_map)"/>
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>

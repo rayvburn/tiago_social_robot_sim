@@ -54,7 +54,7 @@
     <arg name="world_file_wo_people" default="$(find gazebo_ros)/worlds/empty.world"/>
     <arg name="world_file_people" default="$(find gazebo_ros)/worlds/empty.world"/>
     <arg name="map_file" default="provide_a_valid_YAML_with_sim_map_metadata"/>
-    <arg name="localization_config" default="provide_a_valid_YAML_with_initial_sim_pose_for_AMCL"/>
+    <arg name="localization_pose_estimate" default="provide_a_valid_YAML_with_initial_sim_pose_for_AMCL"/>
 
     <!-- === NODES ============================================================================== -->
     <group if="$(arg people_sim)">
@@ -98,7 +98,7 @@
         <arg name="map_file" value="$(arg map_file)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
-        <arg name="localization_config" value="$(arg localization_config)"/>
+        <arg name="localization_pose_estimate" value="$(arg localization_pose_estimate)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="perception_launch" value="$(arg perception_launch)"/>
         <arg name="perception_viz" value="$(arg perception_viz)"/>
