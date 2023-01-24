@@ -12,7 +12,6 @@
     <arg name="robot_type" default="iron"/>
 
     <arg name="perception_launch" default="true"/>
-    <arg name="perception_viz" default="false"/>
 
     <arg name="navigation_launch" default="true"/>
     <arg name="navigation_benchmark" default="true"/>
@@ -22,6 +21,7 @@
     <arg name="nav_state" default="localization"/>
 
     <!-- Run debugging tools -->
+    <arg name="run_perception_viz" default="false"/>
     <arg name="run_nav_viz" default="true"/>
     <arg name="run_reconfigure" default="false"/>
     <arg name="run_plot" default="true"/>
@@ -47,12 +47,12 @@
         <arg name="robot_type" value="$(arg robot_type)"/>
 
         <arg name="perception_launch" value="$(arg perception_launch)"/>
-        <arg name="perception_viz" value="$(arg perception_viz)"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
         <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="run_perception_viz" value="$(arg run_perception_viz)"/>
         <arg name="run_nav_viz" value="$(arg run_nav_viz)"/>
         <arg name="run_reconfigure" value="$(arg run_reconfigure)"/>
         <arg name="run_plot" value="$(arg run_plot)"/>
