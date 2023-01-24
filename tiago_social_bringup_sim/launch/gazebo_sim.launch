@@ -52,17 +52,4 @@
 		<!-- <node name="rviz" pkg="rviz" type="rviz" if="$(arg rviz)" args="-d $(find tiago_2dnav)/config/rviz/navigation$(arg sim_sufix).rviz"/> -->
 		<node name="rviz" pkg="rviz" type="rviz" if="$(arg rviz)" args="-d $(find tiago_social_navigation)/rviz/tiago_navigation.rviz"/>
 	</group>
-
-	<group unless="$(arg public_sim)">
-		<include file="$(find pal_loc_measure)/launch/pal_loc_measure.launch">
-			<arg name="training" value="False"/>
-		</include>
-	</group>
-
-	<!-- pointcloud to laserscan-->
-	<group if="$(arg public_sim)">
-		<include file="$(find tiago_laser_sensors)/launch/rgbd_cloud_laser.launch">
-			<arg name="cloud" value="/xtion/depth_registered/points"/>
-		</include>
-	</group>
 </launch>

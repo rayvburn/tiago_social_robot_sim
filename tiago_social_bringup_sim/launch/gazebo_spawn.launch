@@ -84,17 +84,4 @@
         <!-- image processing -->
 		<node name="image_proc" pkg="image_proc" type="image_proc" ns="xtion/rgb"/>
 	</group>
-
-	<group unless="$(arg public_sim)">
-		<include file="$(find pal_loc_measure)/launch/pal_loc_measure.launch">
-			<arg name="training" value="False"/>
-		</include>
-	</group>
-
-	<!-- pointcloud to laserscan-->
-	<group if="$(arg public_sim)">
-		<include file="$(find tiago_laser_sensors)/launch/rgbd_cloud_laser.launch">
-			<arg name="cloud" value="/xtion/depth_registered/points"/>
-		</include>
-	</group>
 </launch>
