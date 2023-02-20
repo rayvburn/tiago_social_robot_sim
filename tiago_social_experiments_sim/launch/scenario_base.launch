@@ -39,14 +39,8 @@
     -->
     <arg name="shared_map" default="true"/>
 
-    <!--
-        `tf_world_map` should be computed using element-wise subtraction:
-        robot_sim_init_pose - robot_map_init_pose
-        Example inputs and result below:
-        robot sim start: -x 1.7 -y 5.6 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708
-        robot init pose: x 3.587 y: 9.158 Y: -1.733
-    -->
-    <arg name="tf_world_map" default="-1.88 -3.55 +0.00 +0.00 +0.00 -0.1622"/>
+    <!-- Transform world poses to map:    x     y     z   yaw   pitch  roll -->
+    <arg name="tf_world_map" default="-1.88 -3.55 +0.00 -0.1622 +0.00 +0.00"/>
 
     <arg name="pose_sim" default="-x 0.2 -y -1.63 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
     <arg name="map_frame" default="map"/>

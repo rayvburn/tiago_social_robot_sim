@@ -31,7 +31,9 @@
     <arg name="goal_file" value="$(find tiago_social_experiments_sim)/config/012_goal.yaml"/>
 
     <arg name="shared_map" default="true"/>
-    <arg name="tf_world_map" value="-1.88 -3.55 +0.00 +0.00 +0.00 -0.1622"/>
+    <!-- Results from Matlab script: `tf_world_map_calculation.m` -->
+    <arg name="tf_world_map" value="-0.1920 -3.9164 +0.00 +0.1620 +0.00 +0.00"/>
+
     <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_sim_localization/map.yaml"/>
     <arg name="map_frame" default="map"/>
     <arg name="map_bounds" value="[-2.49, 5.86, -2.74, 10.30]"/>
