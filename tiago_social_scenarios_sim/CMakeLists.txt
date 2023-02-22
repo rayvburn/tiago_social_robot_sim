@@ -31,3 +31,8 @@ add_executable(aws_hospital_hubero src/aws_hospital_hubero.cpp)
 target_link_libraries(aws_hospital_hubero
   scenario_utils
 )
+
+add_executable(lab_012_hubero src/lab_012_hubero.cpp)
+target_link_libraries(lab_012_hubero
+  scenario_utils
+)
