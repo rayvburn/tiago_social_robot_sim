@@ -25,7 +25,7 @@ void waitRefreshingRos(std::function<TaskFeedbackType(void)> fun_check, TaskFeed
 
 void waitForRosTime(ros::Duration duration) {
 	auto time_start_delay = ros::Time::now();
-	auto duration_delay = ros::Duration(0);
+	auto duration_delay = ros::Time::now() - time_start_delay;
 	while (duration_delay <= duration) {
 		duration_delay = ros::Time::now() - time_start_delay;
 		waitRefreshingRos();
