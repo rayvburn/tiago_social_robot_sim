@@ -55,6 +55,28 @@ void actorWaypointFollowingThread(
 	actor_move_to_goal_handler.join();
 }
 
+void actorFollowingThread(hubero::TaskRequestRosApi& actor, const std::string& obj_name) {
+	actor.followObject(obj_name);
+	waitRefreshingRos();
+	while (actor.getFollowObjectState() != TASK_FEEDBACK_ACTIVE) {
+		if (!ros::ok()) {
+			throw std::runtime_error("Node stopped working!");
+		}
+		ROS_INFO(
+			"Waiting for %s task to become active. Current state %d...",
+			actor.getName().c_str(),
+			actor.getFollowObjectState()
+		);
+		waitRefreshingRos();
+	}
+	while (actor.getFollowObjectState() == TASK_FEEDBACK_ACTIVE) {
+		if (!ros::ok()) {
+			throw std::runtime_error("Node stopped working!");
+		}
+		waitRefreshingRos();
+	}
+}
+
 int main(int argc, char** argv) {
 	// node initialization
 	ros::init(argc, argv, "012_scenario_hubero_node");
@@ -83,20 +105,37 @@ int main(int argc, char** argv) {
 
 	// moving through waypoints
 	std::thread a2_move_to_goal_handler(actorWaypointFollowingThread, std::ref(actor2), A2_FINISH_POS, A2_FINISH_YAW);
-	/*
-	 * It is crucial to tune the duration so the second actor don't think that his first waypoint
-	 * is not reachable (occupied by the second actor)
-	 */
-	waitForRosTime(ros::Duration(15.0));
-	std::thread a1_move_to_goal_handler(actorWaypointFollowingThread, std::ref(actor1), A1_FINISH_POS, A1_FINISH_YAW);
+	std::thread a1_follow_handler(actorFollowingThread, std::ref(actor1), "actor2");
 
-	// check until both actors finish tasks
-	while (!a1_move_to_goal_handler.joinable() || !a2_move_to_goal_handler.joinable()) {
+	// check until both first actor finish task
+	while (!a2_move_to_goal_handler.joinable()) {
 		waitRefreshingRos();
 	}
-
-	a1_move_to_goal_handler.join();
 	a2_move_to_goal_handler.join();
+
+	// let's stop following - move to goal instead
+	actor1.stopFollowingObject();
+	while (!a1_follow_handler.joinable()) {
+		waitRefreshingRos();
+	}
+	a1_follow_handler.join();
+
+	// move to goal pose
+	std::thread a1_move_to_goal_handler(
+		[&actor1]() {
+			actor1.moveToGoal(A1_FINISH_POS, A1_FINISH_YAW, TF_FRAME_REF);
+			waitRefreshingRos();
+			std::thread actor_move_to_goal_handler(moveToGoalActorHandler, std::cref(actor1));
+			while (!actor_move_to_goal_handler.joinable()) {
+				waitRefreshingRos();
+			}
+			actor_move_to_goal_handler.join();
+		}
+	);
+	while (!a1_move_to_goal_handler.joinable()) {
+		waitRefreshingRos();
+	}
+	a1_move_to_goal_handler.join();
 
 	ROS_INFO("Scenario operation finished!");
 	return 0;
