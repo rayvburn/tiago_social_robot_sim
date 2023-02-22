@@ -1,0 +1,15 @@
+# 'undock' pose is the goal here, inverted orientation
+header:
+  seq: 0,
+  stamp: now
+  frame_id: 'map'
+pose:
+  position:
+    x: -1.407
+    y: 0.163
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.9967175
+    w: 0.0809576
