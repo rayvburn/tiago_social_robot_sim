@@ -8,7 +8,16 @@
     <arg name="robot_type" default="titanium"/>
 
     <arg name="perception_launch" default="false"/>
-    <arg name="perception_input_topic" default="/spencer/perception/tracked_persons"/>
+    <!--
+        NOTE:
+            '/spencer/perception/tracked_persons'
+        topic provides more tracks (e.g., swivel chairs too), whereas
+            '/spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body'
+        topic provides more confident tracks but less of them.
+        There is also:
+            '/spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body_or_moving'
+    -->
+    <arg name="perception_input_topic" default="/spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body"/>
 
     <!-- Set to true if navigation modules should be launched -->
     <arg name="navigation_launch" default="true"/>
