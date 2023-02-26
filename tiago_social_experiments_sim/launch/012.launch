@@ -67,7 +67,7 @@
         <arg name="pose_sim" if="$(eval scenario == 'full')" value="-x 1.7 -y 5.6 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
         <arg name="pose_sim" if="$(eval scenario == 'short')" value="-x 1.729204 -y -0.868255 -z -0.003 -R 0.0 -P 0.0 -Y -2.081408"/>
         <arg name="pose_sim" if="$(eval scenario == 'hard')" value="-x 0.2 -y -1.63 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
-        <arg name="pose_sim" if="$(eval scenario == 'static')"  value="-x +1.20 -y +4.50 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
+        <arg name="pose_sim" if="$(eval scenario == 'static')"  value="-x +2.00 -y +4.30 -z -0.003 -R 0.0 -P 0.0 -Y -2.35"/>
         <arg name="pose_sim" if="$(eval scenario == 'dynamic')" value="-x -1.85 -y -4.00 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
 
         <arg name="localization_pose_estimate" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments_sim)/config/012_pose_full.yaml"/>

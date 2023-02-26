@@ -1,9 +1,9 @@
-# <arg name="pose_sim" default="-x +1.20 -y +4.50 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
+# <arg name="pose_sim" default="-x +2.00 -y +4.30 -z -0.003 -R 0.0 -P 0.0 -Y -2.35"/>
 {
   initial_cov_aa: 0.02,
   initial_cov_xx: 0.01,
   initial_cov_yy: 0.01,
-  initial_pose_a: -0.178,
-  initial_pose_x: 2.927,
-  initial_pose_y: 8.029
+  initial_pose_a: -2.487,
+  initial_pose_x: 3.744,
+  initial_pose_y: 7.865
 }
