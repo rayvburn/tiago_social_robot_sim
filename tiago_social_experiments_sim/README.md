@@ -37,4 +37,4 @@ Therefore, a lightweight version of the world was prepared and is used in simula
 
 ## Evaluation
 
-To evaluate the local planner, use metrics calculator [`move_base_benchmark`](https://github.com/rayvburn/move_base_benchmark). Once `csv` with experiment data is generated follow steps described in [`postprocessing`](https://github.com/rayvburn/move_base_benchmark/tree/melodic-devel-benchmark/postprocessing).
+To evaluate the local planner, use metrics evaluation packages: [`srpb`](https://github.com/rayvburn/srpb) and [`srpb_move_base`](https://github.com/rayvburn/srpb_move_base).
