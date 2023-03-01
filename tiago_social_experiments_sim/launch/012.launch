@@ -70,11 +70,11 @@
         <arg name="pose_sim" if="$(eval scenario == 'static')"  value="-x +2.00 -y +4.30 -z -0.003 -R 0.0 -P 0.0 -Y -2.35"/>
         <arg name="pose_sim" if="$(eval scenario == 'dynamic')" value="-x -1.85 -y -4.00 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
 
-        <arg name="localization_pose_estimate" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments_sim)/config/012_pose_full.yaml"/>
-        <arg name="localization_pose_estimate" if="$(eval scenario == 'hard')" value="$(find tiago_social_experiments_sim)/config/012_pose_hard.yaml"/>
-        <arg name="localization_pose_estimate" if="$(eval scenario == 'short')" value="$(find tiago_social_experiments_sim)/config/012_pose_short.yaml"/>
-        <arg name="localization_pose_estimate" if="$(eval scenario == 'static')"  value="$(find tiago_social_experiments_sim)/config/012_pose_static.yaml"/>
-        <arg name="localization_pose_estimate" if="$(eval scenario == 'dynamic')" value="$(find tiago_social_experiments_sim)/config/012_pose_undock.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments_sim)/config/012_full_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'hard')" value="$(find tiago_social_experiments_sim)/config/012_hard_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'short')" value="$(find tiago_social_experiments_sim)/config/012_short_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'static')"  value="$(find tiago_social_experiments_sim)/config/012_static_start_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'dynamic')" value="$(find tiago_social_experiments_sim)/config/012_undock_amcl.yaml"/>
 
         <arg name="shared_map" value="$(arg shared_map)"/>
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>
@@ -85,8 +85,8 @@
         <arg name="goal_file" if="$(eval scenario == 'full')" value="$(arg goal_file)"/>
         <arg name="goal_file" if="$(eval scenario == 'short')" value="$(arg goal_file)"/>
         <arg name="goal_file" if="$(eval scenario == 'hard')" value="$(arg goal_file)"/>
-        <arg name="goal_file" if="$(eval scenario == 'static')" value="$(find tiago_social_experiments_sim)/config/012_goal_static.yaml"/>
-        <arg name="goal_file" if="$(eval scenario == 'dynamic')" value="$(find tiago_social_experiments_sim)/config/012_goal_dynamic.yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'static')" value="$(find tiago_social_experiments_sim)/config/012_static_finish_pose.yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'dynamic')" value="$(find tiago_social_experiments_sim)/config/012_dynamic_finish_pose.yaml"/>
     </include>
 
     <!--
