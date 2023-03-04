@@ -90,6 +90,16 @@
     </include>
 
     <!--
+        move the head slightly down (tilt angle) to observe close environment better, however, too big angle will
+        likely cause false positives in obstacle detection, e.g., at -0.275 DWA planner gets stuck often
+    -->
+    <node pkg="play_motion" type="move_joint" name="move_jnt_head_tilt" output="screen" args="head_2_joint -0.1 2.0"/>
+    <!-- head (RGBD camera) pointing forward -->
+    <node pkg="play_motion" type="move_joint" name="move_jnt_head_pan" output="screen" args="head_1_joint +0.0 2.0"/>
+    <!-- adjust to the default height of a real robot -->
+    <node pkg="play_motion" type="move_joint" name="move_jnt_torso_lift" output="screen" args="torso_lift_joint +0.2 2.0"/>
+
+    <!--
         Launch HuBeRo actors ROS interfaces. Note that it will significantly affect simulation performance.
     -->
     <group if="$(arg people_sim)">
