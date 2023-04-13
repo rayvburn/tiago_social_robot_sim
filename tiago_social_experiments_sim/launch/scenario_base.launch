@@ -27,6 +27,7 @@
 
     <arg name="global_planner" default="navfn"/>
     <arg name="local_planner" default="teb"/>
+    <arg name="costmap_contexts" default="social"/>
     <arg name="nav_state" default="localization"/>
 
     <arg name="narrow_laser_range" default="true"/>
@@ -101,6 +102,7 @@
         <arg name="map_file" value="$(arg map_file)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
+        <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>
         <arg name="localization_pose_estimate" value="$(arg localization_pose_estimate)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="perception_launch" value="$(arg perception_launch)"/>
