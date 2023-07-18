@@ -58,6 +58,7 @@
     <arg name="world_file_wo_people" default="$(find gazebo_ros)/worlds/empty.world"/>
     <arg name="world_file_people" default="$(find gazebo_ros)/worlds/empty.world"/>
     <arg name="map_file" default="provide_a_valid_YAML_with_sim_map_metadata"/>
+    <arg name="allow_clearing_map_obstacles" default="true"/>
     <arg name="localization_pose_estimate" default="provide_a_valid_YAML_with_initial_sim_pose_for_AMCL"/>
 
     <!-- === NODES ============================================================================== -->
@@ -100,6 +101,7 @@
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="external_map" value="$(arg people_sim)"/>
         <arg name="map_file" value="$(arg map_file)"/>
+        <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
         <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>

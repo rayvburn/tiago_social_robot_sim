@@ -35,6 +35,7 @@
     <arg name="tf_world_map" value="-3.169 +2.337 +0.000 +3.1415 +0.000 +0.000"/>
 
     <arg name="map_file" value="$(find aws_robomaker_hospital_world)/maps/aws_hospital_slam.yaml"/>
+    <arg name="allow_clearing_map_obstacles" default="false"/>
     <arg name="map_frame" default="map"/>
     <arg name="map_bounds" value="[-13.82, +7.65, -13.08, +36.31]"/>
 
@@ -74,6 +75,7 @@
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>
 
         <arg name="map_file" value="$(arg map_file)"/>
+        <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
         <arg name="map_frame" value="$(arg map_frame)"/>
 
         <arg name="goal_file" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_normal_finish_pose.yaml"/>
