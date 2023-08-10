@@ -2,7 +2,7 @@
 <launch>
     <!-- === ARGUMENTS ========================================================================== -->
     <!-- (normal) -->
-    <arg name="scenario" value="normal"/>
+    <arg name="scenario" default="normal"/>
 
     <arg name="people_sim" default="true"/>
     <arg name="people_lite" default="false"/>
