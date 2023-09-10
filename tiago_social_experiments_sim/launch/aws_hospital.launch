@@ -64,9 +64,13 @@
         <!-- `hospital` world loads longer than simpler ones, goal delay must be prolonged -->
         <arg name="publish_goal_delay" value="$(eval {'titanium': '60', 'steel': '60', 'iron': '25'}.get(arg('robot_type'), '25'))"/>
 
+        <!-- Selecting the Gazebo world file to use -->
         <arg name="world_file_wo_people" value="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
-        <arg name="world_file_people" unless="$(arg people_lite)" value="$(find aws_robomaker_hospital_world)/worlds/hospital_crowded_hubero.world"/>
-        <arg name="world_file_people" if="$(arg people_lite)" value="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
+        <!-- Scenario-specific -->
+        <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite == true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite != true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital_crowded_hubero.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'wall_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'crowd_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_reception_crowd.world"/>
 
         <arg name="pose_sim" if="$(eval scenario == 'normal')" value="-x -3.2 -y 2.3 -z -0.003 -R 0.0 -P 0.0 -Y -3.1415"/>
         <arg name="pose_sim" if="$(eval scenario == 'wall_avoidance')" value="-x -5.9 -y -6.55 -z -0.003 -R 0.0 -P 0.0 -Y -1.57"/>
