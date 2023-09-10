@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <!-- === ARGUMENTS ========================================================================== -->
-    <!-- (normal|wall_avoidance) -->
-    <arg name="scenario" default="wall_avoidance"/>
+    <!-- (normal|wall_avoidance|crowd_avoidance) -->
+    <arg name="scenario" default="normal"/>
 
     <arg name="people_sim" default="true"/>
     <arg name="people_lite" default="false"/>
@@ -70,8 +70,10 @@
 
         <arg name="pose_sim" if="$(eval scenario == 'normal')" value="-x -3.2 -y 2.3 -z -0.003 -R 0.0 -P 0.0 -Y -3.1415"/>
         <arg name="pose_sim" if="$(eval scenario == 'wall_avoidance')" value="-x -5.9 -y -6.55 -z -0.003 -R 0.0 -P 0.0 -Y -1.57"/>
+        <arg name="pose_sim" if="$(eval scenario == 'crowd_avoidance')" value="-x -3.6 -y 4.3 -z -0.003 -R 0.0 -P 0.0 -Y 1.54"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_normal_start_amcl.yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_wall_avoidance_start_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_crowd_avoidance_start_amcl.yaml"/>
 
         <arg name="shared_map" value="$(arg shared_map)"/>
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>
@@ -82,6 +84,7 @@
 
         <arg name="goal_file" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_normal_finish_pose.yaml"/>
         <arg name="goal_file" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_wall_avoidance_finish_pose.yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_crowd_avoidance_finish_pose.yaml"/>
     </include>
 
     <!--
