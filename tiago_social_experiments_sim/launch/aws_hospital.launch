@@ -96,28 +96,26 @@
         Note that it will significantly affect simulation performance. Instead, `lite` mode is targeted
         for faster prototyping
     -->
-    <group if="$(arg people_sim)">
-        <group unless="$(arg people_lite)">
-            <include file="$(find hubero_ros)/launch/actor.launch">
-                <arg name="actor_name" value="actor1"/>
-                <arg name="local_planner" value="teb"/>
-                <arg name="map_file" value="$(arg map_file)"/>
-                <arg name="use_shared_map" value="$(arg shared_map)"/>
-                <arg name="map_frame" value="$(arg map_frame)"/>
-                <arg name="tf_world_map" value="$(arg tf_world_map)"/>
-                <arg name="map_bounds" value="$(arg map_bounds)"/>
-            </include>
-            <include file="$(find hubero_ros)/launch/actor.launch">
-                <arg name="actor_name" value="actor2"/>
-                <arg name="local_planner" value="teb"/>
-                <arg name="map_file" value="$(arg map_file)"/>
-                <arg name="use_shared_map" value="$(arg shared_map)"/>
-                <arg name="map_frame" value="$(arg map_frame)"/>
-                <arg name="tf_world_map" value="$(arg tf_world_map)"/>
-                <arg name="map_bounds" value="$(arg map_bounds)"/>
-            </include>
-            <!-- scenario node - orchestrates actors movements -->
-            <node pkg="tiago_social_scenarios_sim" type="aws_hospital_hubero" name="aws_hospital_hubero" output="screen" args="1"/>
-        </group>
+    <group if="$(eval scenario == 'normal' and people_sim == true and people_lite == false)">
+        <include file="$(find hubero_ros)/launch/actor.launch">
+            <arg name="actor_name" value="actor1"/>
+            <arg name="local_planner" value="teb"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="use_shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <include file="$(find hubero_ros)/launch/actor.launch">
+            <arg name="actor_name" value="actor2"/>
+            <arg name="local_planner" value="teb"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="use_shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <!-- scenario node - orchestrates actors movement for a specific scenario -->
+        <node pkg="tiago_social_scenarios_sim" type="aws_hospital_hubero" name="aws_hospital_hubero" output="screen" args="1"/>
     </group>
 </launch>
