@@ -24,10 +24,9 @@ get_scenario_type() {
 get_planners_type() {
     local_planner="$1"
     global_planner="$2"
-    # trim trailing .launch (if exists)
-    world="${world%.launch}"
+    costmap_contexts="$3"
 
-    planners_type="${global_planner}-${local_planner}"
+    planners_type="${costmap_contexts}-${global_planner}-${local_planner}"
     # return string from the function
     echo "$planners_type"
 }
@@ -35,12 +34,13 @@ get_planners_type() {
 get_experiment_type() {
     local_planner="$1"
     global_planner="$2"
-    scenario="$3"
-    world="$4"
+    costmap_contexts="$3"
+    scenario="$4"
+    world="$5"
     # trim trailing .launch (if exists)
     world="${world%.launch}"
 
-    experiment_type="$(get_scenario_type $scenario $world)-$(get_planners_type $local_planner $global_planner)"
+    experiment_type="$(get_scenario_type $scenario $world)-$(get_planners_type $local_planner $global_planner $costmap_contexts)"
     # return string from the function
     echo "$experiment_type"
 }
@@ -51,8 +51,9 @@ run_sim_experiment() {
     timeout="$1" # ROS Time timeout
     local_planner="$2"
     global_planner="$3"
-    scenario="$4"
-    world="$5"
+    costmap_contexts="$4"
+    scenario="$5"
+    world="$6"
 
     # 5.0, because on average, the real time factor is about 0.20;
     # plus 1 minute for the launch, 1 minute for shutdown,
@@ -63,10 +64,11 @@ run_sim_experiment() {
     echo "  ROS time timeout: $timeout sec (system timeout is $systim_timeout sec),"
     echo "  local planner:    $local_planner,"
     echo "  global planner:   $global_planner,"
+    echo "  costmap contexts: $costmap_contexts,"
     echo "  scenario:         $scenario,"
     echo "  world launch:     $world"
 
-    echo "Experiment type: $(get_experiment_type $local_planner $global_planner $scenario $world)"
+    echo "Experiment type: $(get_experiment_type $local_planner $global_planner $costmap_contexts $scenario $world)"
 
     # Main syntax:
     # python run_sim_experiment.py <timeout> <local_planner> <global_planner> <scenario> <launch_name> <launch_rel_dir> <launch_pkg_dir>
@@ -78,6 +80,7 @@ run_sim_experiment() {
             $timeout \
             $local_planner \
             $global_planner \
+            $costmap_contexts \
             $scenario \
             $world \
         2>&1 | tee output.log
@@ -138,15 +141,16 @@ run_benchmark_experiment() {
     timeout="$1" # ROS Time timeout
     local_planner="$2"
     global_planner="$3"
-    scenario="$4"
-    world="$5"
+    costmap_contexts="$4"
+    scenario="$5"
+    world="$6"
 
     # run the simulation experiment
-    run_sim_experiment $timeout $local_planner $global_planner $scenario $world
+    run_sim_experiment $timeout $local_planner $global_planner $costmap_contexts $scenario $world
 
     # when the experiment finishes - do stuff related to the SRPB logs
-    local logs_source_dir=$6
-    local logs_target_dir=$7
+    local logs_source_dir=$7
+    local logs_target_dir=$8
     echo ""
     echo "Starting SRPB stuff with logs located at $logs_source_dir. Target logs directory is $logs_target_dir"
     echo ""
@@ -158,7 +162,7 @@ run_benchmark_experiment() {
     # directory for the specific world-scenario combo
     mkdir -p $logs_target_dir_scenario
 
-    planners_type=$(get_planners_type $local_planner $global_planner)
+    planners_type=$(get_planners_type $local_planner $global_planner $costmap_contexts)
     experiment_id=$(compute_experiment_id $logs_target_dir_scenario $planners_type)
     echo "Scenario type is '$scenario_type'"
     echo "Planners type is '$planners_type'"
@@ -194,16 +198,17 @@ run_benchmark_experiment() {
 #   $1 ROS time timeout
 #   $2 local_planner
 #   $3 global_planner
-#   $4 scenario
-#   $5 world launch
-#   $6 logs_source_dir
-#   $7 logs_target_dir
-#   $8 number of trials
+#   $4 costmap_contexts
+#   $5 scenario
+#   $6 world launch
+#   $7 logs_source_dir
+#   $8 logs_target_dir
+#   $9 number of trials
 run_benchmark_experiment_multiple() {
-    local iterations=$8
+    local iterations=$9
     for ((i = 1; i <= iterations; i++)); do
         echo "Starting benchmark experiment, trial $i"
-        run_benchmark_experiment $1 $2 $3 $4 $5 $6 $7
+        run_benchmark_experiment $1 $2 $3 $4 $5 $6 $7 $8
     done
 }
 
@@ -223,11 +228,11 @@ readonly TRIALS_NUM=20
 timeout=10 # ROS Time in seconds FIXME!
 
 # Scenarios to evaluate
-run_benchmark_experiment_multiple $timeout teb global_planner normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout dwa global_planner normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout cohan global_planner normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout hateb global_planner normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout hubero global_planner normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple $timeout teb global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple $timeout dwa global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple $timeout cohan global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple $timeout hateb global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple $timeout hubero global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
 
 echo ""
 echo "**Finished conducting simulation experiments**"

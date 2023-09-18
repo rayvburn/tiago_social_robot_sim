@@ -36,6 +36,7 @@ if __name__ == '__main__':
     launch_name = 'aws_hospital.launch'
     scenario = 'normal'
     global_planner = 'global_planner'
+    costmap_contexts = 'social_extended'
     local_planner = 'teb'
     timeout = 50.0 # expressed as ROS Time
 
@@ -46,22 +47,25 @@ if __name__ == '__main__':
     if argsnum >= 4:
         global_planner = str(sys.argv[3]).lstrip().rstrip()
     if argsnum >= 5:
-        scenario = str(sys.argv[4]).lstrip().rstrip()
+        costmap_contexts = str(sys.argv[4]).lstrip().rstrip()
     if argsnum >= 6:
-        launch_name = str(sys.argv[5]).lstrip().rstrip()
+        scenario = str(sys.argv[5]).lstrip().rstrip()
     if argsnum >= 7:
-        launch_rel_dir = str(sys.argv[6]).lstrip().rstrip()
+        launch_name = str(sys.argv[6]).lstrip().rstrip()
     if argsnum >= 8:
-        launch_pkg = str(sys.argv[7]).lstrip().rstrip()
+        launch_rel_dir = str(sys.argv[7]).lstrip().rstrip()
+    if argsnum >= 9:
+        launch_pkg = str(sys.argv[8]).lstrip().rstrip()
 
     print('Running the simulation experiment launcher with:')
-    print('\t timeout:        ' + str(timeout))
-    print('\t local_planner:  ' + str(local_planner))
-    print('\t global_planner: ' + str(global_planner))
-    print('\t scenario:       ' + str(scenario))
-    print('\t launch_name:    ' + str(launch_name))
-    print('\t launch_rel_dir: ' + str(launch_rel_dir))
-    print('\t launch_pkg_dir: ' + str(launch_pkg_dir))
+    print('\t timeout:          ' + str(timeout))
+    print('\t local_planner:    ' + str(local_planner))
+    print('\t global_planner:   ' + str(global_planner))
+    print('\t costmap_contexts: ' + str(costmap_contexts))
+    print('\t scenario:         ' + str(scenario))
+    print('\t launch_name:      ' + str(launch_name))
+    print('\t launch_rel_dir:   ' + str(launch_rel_dir))
+    print('\t launch_pkg_dir:   ' + str(launch_pkg_dir))
 
     # create a launch path
     launch_path = os.path.join(launch_pkg_dir, launch_rel_dir, launch_name)
@@ -72,11 +76,11 @@ if __name__ == '__main__':
         str(launch_path),
         'local_planner:=' + str(local_planner),
         'global_planner:=' + str(global_planner),
+        'costmap_contexts:=' + str(costmap_contexts),
         'scenario:=' + str(scenario),
         'navigation_benchmark:=true',
         'perception_launch:=true',
         'publish_goal:=true',
-        'costmap_contexts:=social_extended',
         'run_reconfigure:=false'
     ]
     print("CLI args of the launcher are: " + str(cli_args[1:]))
