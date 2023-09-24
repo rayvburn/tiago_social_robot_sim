@@ -32,7 +32,7 @@ target_link_libraries(aws_hospital_hubero
   scenario_utils
 )
 
-add_executable(lab_012_hubero src/lab_012_hubero.cpp)
-target_link_libraries(lab_012_hubero
+add_executable(lab_012_dynamic_hubero src/lab_012_dynamic_hubero.cpp)
+target_link_libraries(lab_012_dynamic_hubero
   scenario_utils
 )

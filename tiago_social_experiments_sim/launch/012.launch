@@ -126,6 +126,6 @@
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
         <!-- scenario node - orchestrates actors movements -->
-        <node if="$(eval scenario == 'dynamic')" pkg="tiago_social_scenarios_sim" type="lab_012_hubero" name="lab_012_hubero" output="screen" args="1"/>
+        <node if="$(eval scenario == 'dynamic')" pkg="tiago_social_scenarios_sim" type="lab_012_dynamic_hubero" name="lab_012_dynamic_hubero" output="screen" args="1"/>
     </group>
 </launch>
