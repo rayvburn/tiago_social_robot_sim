@@ -27,8 +27,8 @@ target_link_libraries(scenario_utils
 )
 
 ## executables
-add_executable(aws_hospital_hubero src/aws_hospital_hubero.cpp)
-target_link_libraries(aws_hospital_hubero
+add_executable(aws_hospital_normal_hubero src/aws_hospital_normal_hubero.cpp)
+target_link_libraries(aws_hospital_normal_hubero
   scenario_utils
 )
 

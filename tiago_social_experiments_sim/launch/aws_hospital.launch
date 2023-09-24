@@ -116,6 +116,6 @@
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
         <!-- scenario node - orchestrates actors movement for a specific scenario -->
-        <node pkg="tiago_social_scenarios_sim" type="aws_hospital_hubero" name="aws_hospital_hubero" output="screen" args="1"/>
+        <node pkg="tiago_social_scenarios_sim" type="aws_hospital_normal_hubero" name="aws_hospital_normal_hubero" output="screen" args="1"/>
     </group>
 </launch>
