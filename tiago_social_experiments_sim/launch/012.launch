@@ -64,8 +64,11 @@
         <arg name="publish_goal_delay" if="$(eval scenario == 'dynamic')" value="$(eval {'titanium': '110', 'steel': '110', 'iron': '70'}.get(arg('robot_type'), '70'))"/>
 
         <arg name="world_file_wo_people" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
-        <arg name="world_file_people" unless="$(eval scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_actor.world"/>
-        <arg name="world_file_people" if="$(eval scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_actor_dynamic.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'full')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'short')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'hard')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'static')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic.world"/>
 
         <arg name="pose_sim" if="$(eval scenario == 'full')" value="-x 1.7 -y 5.6 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
         <arg name="pose_sim" if="$(eval scenario == 'short')" value="-x 1.729204 -y -0.868255 -z -0.003 -R 0.0 -P 0.0 -Y -2.081408"/>
@@ -85,6 +88,7 @@
         <arg name="map_file" value="$(arg map_file)"/>
         <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
         <arg name="map_frame" value="$(arg map_frame)"/>
+        <!-- Set `external_map` to false for scenarios in which HuBeRo actors are not spawned -->
 
         <arg name="goal_file" if="$(eval scenario == 'full')" value="$(arg goal_file)"/>
         <arg name="goal_file" if="$(eval scenario == 'short')" value="$(arg goal_file)"/>
@@ -106,26 +110,55 @@
     <!--
         Launch HuBeRo actors ROS interfaces. Note that it will significantly affect simulation performance.
     -->
-    <group if="$(arg people_sim)">
-        <include file="$(find hubero_ros)/launch/actor.launch">
+    <group if="$(eval people_sim == true and (scenario == 'static' or scenario == 'hard' or scenario == 'short' or scenario == 'full'))">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="local_planner" value="teb"/>
+            <arg name="pose_x" value="0.10"/>
+            <arg name="pose_y" value="-4.00"/>
+            <arg name="pose_yaw" value="-2.35"/>
             <arg name="map_file" value="$(arg map_file)"/>
-            <arg name="use_shared_map" value="$(arg shared_map)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
-        <include file="$(find hubero_ros)/launch/actor.launch">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor2"/>
-            <arg name="local_planner" value="teb"/>
+            <arg name="pose_x" value="-0.6"/>
+            <arg name="pose_y" value="-3.05"/>
+            <arg name="pose_yaw" value="0.75"/>
             <arg name="map_file" value="$(arg map_file)"/>
-            <arg name="use_shared_map" value="$(arg shared_map)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+    </group>
+
+    <group if="$(eval scenario == 'dynamic' and people_sim == true)">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
+            <arg name="actor_name" value="actor1"/>
+            <arg name="pose_x" value="+0.3"/>
+            <arg name="pose_y" value="+4.75"/>
+            <arg name="pose_yaw" value="1.70"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
+            <arg name="actor_name" value="actor2"/>
+            <arg name="pose_x" value="-0.6"/>
+            <arg name="pose_y" value="+4.2"/>
+            <arg name="pose_yaw" value="+2.10"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
         <!-- scenario node - orchestrates actors movements -->
-        <node if="$(eval scenario == 'dynamic')" pkg="tiago_social_scenarios_sim" type="lab_012_dynamic_hubero" name="lab_012_dynamic_hubero" output="screen" args="1"/>
+        <node pkg="tiago_social_scenarios_sim" type="lab_012_dynamic_hubero" name="lab_012_dynamic_hubero" output="screen" args="1"/>
     </group>
 </launch>

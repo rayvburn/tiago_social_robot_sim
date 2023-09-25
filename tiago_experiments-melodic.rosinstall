@@ -1,5 +1,5 @@
 # HuBeRo provides dynamic human actors
-- git: {local-name: hubero, uri: 'https://github.com/rayvburn/hubero.git', version: 'task-request-ros-api-get-name-method'}
+- git: {local-name: hubero, uri: 'https://github.com/rayvburn/hubero.git', version: 'launch-for-spawning-actors-in-gazebo'}
 
 # worlds used in experiments
 - git: {local-name: tiago_sim_integration, uri: 'https://github.com/rayvburn/tiago_sim_integration.git', version: '012-hubero-integration'}

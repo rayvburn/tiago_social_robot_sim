@@ -68,7 +68,7 @@
         <arg name="world_file_wo_people" value="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
         <!-- Scenario-specific -->
         <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite == true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
-        <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite != true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital_crowded_hubero.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite != true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital_crowded.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'wall_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'crowd_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_reception_crowd.world"/>
 
@@ -85,6 +85,7 @@
         <arg name="map_file" value="$(arg map_file)"/>
         <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
         <arg name="map_frame" value="$(arg map_frame)"/>
+        <!-- Set `external_map` to false for scenarios in which HuBeRo actors are not spawned -->
 
         <arg name="goal_file" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_normal_finish_pose.yaml"/>
         <arg name="goal_file" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital_wall_avoidance_finish_pose.yaml"/>
@@ -97,25 +98,29 @@
         for faster prototyping
     -->
     <group if="$(eval scenario == 'normal' and people_sim == true and people_lite == false)">
-        <include file="$(find hubero_ros)/launch/actor.launch">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="local_planner" value="teb"/>
+            <arg name="pose_x" value="-7.6"/>
+            <arg name="pose_y" value="-7.95"/>
+            <arg name="pose_yaw" value="0.82"/>
             <arg name="map_file" value="$(arg map_file)"/>
-            <arg name="use_shared_map" value="$(arg shared_map)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
-        <include file="$(find hubero_ros)/launch/actor.launch">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor2"/>
-            <arg name="local_planner" value="teb"/>
+            <arg name="pose_x" value="-7.50"/>
+            <arg name="pose_y" value="-22.95"/>
+            <arg name="pose_yaw" value="1.78"/>
             <arg name="map_file" value="$(arg map_file)"/>
-            <arg name="use_shared_map" value="$(arg shared_map)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
-        <!-- scenario node - orchestrates actors movement for a specific scenario -->
+        <!-- scenario node - orchestrates actors movements -->
         <node pkg="tiago_social_scenarios_sim" type="aws_hospital_normal_hubero" name="aws_hospital_normal_hubero" output="screen" args="1"/>
     </group>
 </launch>
