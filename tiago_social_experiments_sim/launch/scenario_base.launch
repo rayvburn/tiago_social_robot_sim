@@ -21,6 +21,8 @@
 
     <!-- Set to true if navigation modules should be launched -->
     <arg name="navigation_launch" default="true"/>
+    <!-- It is assumed that in the simulation, modules simulating humans provide a map by default (configurable) -->
+    <arg name="external_map" default="$(arg people_sim)"/>
 
     <!-- Set to true if navigation benchmark should be enabled -->
     <arg name="navigation_benchmark" default="false"/>
@@ -99,7 +101,7 @@
         <arg name="nav_state" value="$(arg nav_state)"/>
         <arg name="narrow_laser_range" value="$(arg narrow_laser_range)"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
-        <arg name="external_map" value="$(arg people_sim)"/>
+        <arg name="external_map" value="$(arg external_map)"/>
         <arg name="map_file" value="$(arg map_file)"/>
         <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
