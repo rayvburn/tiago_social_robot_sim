@@ -10,6 +10,10 @@
 #   cd $(rospack find tiago_social_experiments_sim)/scripts
 #   ./sim_experiments_launcher.sh
 #
+
+# Ref: https://stackoverflow.com/a/246128
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 get_scenario_type() {
     scenario="$1"
     world="$2"
@@ -76,7 +80,7 @@ run_sim_experiment() {
     # Run with a timeout, ref: https://stackoverflow.com/a/4581821
     # Duplicate stdout and stderr to log file
     timeout $systim_timeout \
-        python run_sim_experiment.py \
+        python $SCRIPT_DIR/run_sim_experiment.py \
             $timeout \
             $local_planner \
             $global_planner \
@@ -188,7 +192,7 @@ run_benchmark_experiment() {
     if [ -e "$newest_log" ]; then
         echo "Copying the newest experiment's file '$newest_log' to $logs_result_dir"
         cp $newest_log $logs_result_dir
-        echo "Deleting the experiment's log file '$newest_log' from the script directory"
+        echo "Deleting the experiment's log file '$newest_log' from the current directory"
         rm $newest_log
     fi
 }
