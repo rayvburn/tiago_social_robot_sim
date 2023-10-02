@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 		// talk, maintaining recently approached pose
 		actor1.talk(A1_NURSE_DESK_POS, A1_NURSE_DESK_YAW, TF_FRAME_REF);
 		// wait for actor2 to arrive
-		waitRefreshingRos(std::bind(&hubero::TaskRequestRosApi::getMoveToGoalState, actor2), TASK_FEEDBACK_ACTIVE);
+		waitRefreshingRos(std::bind(&hubero::TaskRequestRosApi::getMoveToGoalState, std::ref(actor2)), TASK_FEEDBACK_ACTIVE);
 		a2_move_to_goal_handler.join();
 		ROS_INFO("actor2 also approached the goal, he is going to start talking to a nurse");
 		// start talking
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
 		ROS_INFO("actor2 approached the goal, he is going to start talking to a nurse");
 		actor2.talk(A2_NURSE_DESK_POS, A2_NURSE_DESK_YAW, TF_FRAME_REF);
 		// wait for actor1 to arrive
-		waitRefreshingRos(std::bind(&hubero::TaskRequestRosApi::getMoveToGoalState, actor1), TASK_FEEDBACK_ACTIVE);
+		waitRefreshingRos(std::bind(&hubero::TaskRequestRosApi::getMoveToGoalState, std::ref(actor1)), TASK_FEEDBACK_ACTIVE);
 		a1_move_to_goal_handler.join();
 		ROS_INFO("actor1 also approached the goal, he is going to start talking to a nurse");
 		// start talking
