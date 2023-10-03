@@ -17,22 +17,15 @@ catkin_package(
   CATKIN_DEPENDS hubero_ros
 )
 
-add_library(scenario_utils
-  include/${PROJECT_NAME}/utils.h
-  src/utils.cpp
-)
-target_link_libraries(scenario_utils
+## executables
+add_executable(aws_hospital_normal_hubero src/aws_hospital_normal_hubero.cpp)
+target_link_libraries(aws_hospital_normal_hubero
   ${hubero_ros_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 
-## executables
-add_executable(aws_hospital_normal_hubero src/aws_hospital_normal_hubero.cpp)
-target_link_libraries(aws_hospital_normal_hubero
-  scenario_utils
-)
-
 add_executable(lab_012_dynamic_hubero src/lab_012_dynamic_hubero.cpp)
 target_link_libraries(lab_012_dynamic_hubero
-  scenario_utils
+  ${hubero_ros_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
