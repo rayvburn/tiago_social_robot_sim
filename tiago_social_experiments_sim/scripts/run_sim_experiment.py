@@ -1,5 +1,6 @@
 import roslaunch
 import rospy
+import signal
 import subprocess
 import sys
 import os
@@ -9,8 +10,8 @@ from actionlib_msgs.msg import GoalStatus
 
 
 def mbCallback(data):
-
     rospy.loginfo(rospy.get_caller_id() + " move_base action status %s", data.status.status)
+
     # evaluate navigation state
     navigation_state = int(data.status.status)
     nav_succeeded = navigation_state == GoalStatus.SUCCEEDED
@@ -19,8 +20,11 @@ def mbCallback(data):
 
     if nav_succeeded or nav_aborted or nav_rejected:
         rospy.loginfo(rospy.get_caller_id() + " Shutting down the 'run_sim_experiment' script! move_base status: %s", data.status.status)
-        rospy.sleep(1)
-        parent.shutdown()
+        rospy.signal_shutdown("Shutting down due to reaching the goal pose")
+
+
+def signal_handler(sig, frame):
+    rospy.signal_shutdown("Received a SIGINT, shutting down ROS")
 
 
 if __name__ == '__main__':
@@ -87,15 +91,33 @@ if __name__ == '__main__':
     roslaunch_args = cli_args[1:]
     roslaunch_file = [(roslaunch.rlutil.resolve_launch_arguments(cli_args)[0], roslaunch_args)]
 
-    # TODO: experimental timeouts to make shutdown more robust
-    parent = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_file, sigint_timeout=30, sigterm_timeout=15)
+    # attach a handler for the SIGINT
+    signal.signal(signal.SIGINT, signal_handler)
+
+    # custom timeouts to make shutdown more robust
+    parent = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_file, sigint_timeout=10, sigterm_timeout=10)
     parent.start()
-    rospy.loginfo("started")
+    rospy.loginfo("Starting the ROS Launch")
 
     # launch node that monitors the navigation progress
     rospy.init_node('sim_experiment_runner', anonymous=True)
     rospy.Subscriber("/move_base/result", MoveBaseActionResult, mbCallback)
 
-    # sleep for 'timeout' if shutdown did not occur previously
-    rospy.sleep(timeout)
-    parent.shutdown()
+    rospy.loginfo("Spinning until the ROS shutdown or a timeout")
+    exec_start_time = rospy.get_time()
+    try:
+        # spin until ROS shutdown, manual shutdown or timeout
+        while not rospy.is_shutdown() and (rospy.get_time() - exec_start_time) <= timeout:
+            rospy.loginfo(
+                "Executing the experiment (ROS shutdown=" + str(rospy.is_shutdown())
+                + " execution time=" + str((rospy.get_time() - exec_start_time)) + "/" + str(timeout)
+            )
+            rospy.sleep(1.0)
+    except rospy.ROSInterruptException:
+        rospy.loginfo("ROS Interrupt Exception")
+        parent.shutdown()
+    finally:
+        rospy.signal_shutdown("Reached terminal conditions of the execution. Shutting down the ROS launch")
+        parent.shutdown()
+
+    rospy.loginfo("The simulation experiment launcher has been shut down successfully")
