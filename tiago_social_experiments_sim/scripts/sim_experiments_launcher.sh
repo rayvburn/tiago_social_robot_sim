@@ -227,17 +227,55 @@ readonly LOGS_SOURCE_DIR=$HOME/srpb_logs
 readonly LOGS_TARGET_DIR=$HOME/srpb_logs_automation
 
 # how many times each planner will be evaluated
-readonly TRIALS_NUM=20
-# timeout for the specific scenario
-timeout=10 # ROS Time in seconds FIXME!
+readonly TRIALS_NUM=8
+# timeouts for the specific scenarios are expressed as ROS Time in seconds
 
 # Scenarios to evaluate
-run_benchmark_experiment_multiple $timeout teb global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout dwa global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout cohan global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout hateb global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple $timeout hubero global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 140 teb       global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 dwa       global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 cohan     global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 hateb     global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 hubero    global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 cadrl     global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 sarl      global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 240 sarl_star global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+
+run_benchmark_experiment_multiple 70 teb       global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 dwa       global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 cohan     global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 hateb     global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 hubero    global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 cadrl     global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 sarl      global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 70 sarl_star global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+
+run_benchmark_experiment_multiple 100 teb       global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 dwa       global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 cohan     global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 hateb     global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 hubero    global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 cadrl     global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 sarl      global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+run_benchmark_experiment_multiple 100 sarl_star global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
 
 echo ""
 echo "**Finished conducting simulation experiments**"
 echo ""
+echo ""
+echo "**Creating spreadsheets with the results**"
+echo ""
+
+echo "Preprocessing - differentiate planner directories to avoid the wrong recognition by the name"
+echo "Preprocessing to differentiate 'sarl' and 'sarl_star' planners"
+$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/012-dynamic/          sarl sarl_star sarl_original
+echo ""
+$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/012-passing_in_front/ sarl sarl_star sarl_original
+echo ""
+$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/aws_hospital-normal/  sarl sarl_star sarl_original
+echo ""
+
+python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/aws_hospital-normal/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star
+echo ""
+python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-dynamic/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star
+echo ""
+python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-passing_in_front/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star
