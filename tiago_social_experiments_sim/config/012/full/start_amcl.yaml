@@ -1,10 +1,10 @@
 # full
-# <arg name="pose_sim" default="-x 1.7 -y 5.6 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
+# <arg name="pose_sim" default="-x 1.7 -y 5.0 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
 {
   initial_cov_aa: 0.02,
   initial_cov_xx: 0.01,
   initial_cov_yy: 0.01,
-  initial_pose_a: -1.733,
-  initial_pose_x: 3.587,
-  initial_pose_y: 9.158
+  initial_pose_a: -1.715,
+  initial_pose_x: 3.402,
+  initial_pose_y: 8.458
 }
