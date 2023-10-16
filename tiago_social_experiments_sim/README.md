@@ -38,3 +38,21 @@ Therefore, a lightweight version of the world was prepared and is used in simula
 ## Evaluation
 
 To evaluate the local planner, use metrics evaluation packages: [`srpb`](https://github.com/rayvburn/srpb) and [`srpb_move_base`](https://github.com/rayvburn/srpb_move_base).
+
+Simulation experiments evaluating the trajectory planners using the [SRPB](https://ieeexplore.ieee.org/document/10194930) benchmark can be launched with:
+
+- static scenario
+  ```sh
+  roslaunch tiago_social_experiments_sim 012.launch scenario:=static local_planner:=(eband|dwa|trajectory|teb|hateb|cohan) global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=true publish_goal:=true
+  ```
+
+- dynamic scenario
+  ```sh
+  roslaunch tiago_social_experiments_sim 012.launch scenario:=dynamic local_planner:=(eband|dwa|trajectory|teb|hateb|cohan) global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=true publish_goal:=true
+  ```
+
+Goal poses can also be published manually, e.g.:
+
+```sh
+rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped --file $(rospack find tiago_social_experiments_sim)/config/012/static/finish_pose.yaml --once --latch
+```
