@@ -29,3 +29,9 @@ target_link_libraries(lab_012_dynamic_hubero
   ${hubero_ros_LIBRARIES}
   ${catkin_LIBRARIES}
 )
+
+add_executable(lab_012_passing_in_front_hubero src/lab_012_passing_in_front_hubero.cpp)
+target_link_libraries(lab_012_passing_in_front_hubero
+  ${hubero_ros_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
