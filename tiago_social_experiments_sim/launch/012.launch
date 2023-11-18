@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <!-- === ARGUMENTS ========================================================================== -->
-    <!-- (full|short|hard|static|dynamic|passing_in_front|overtaking) -->
+    <!-- (full|short|hard|static|dynamic|passing_in_front|overtaking|crossing) -->
     <arg name="scenario" default="static"/>
 
     <arg name="people_sim" default="true"/>
@@ -48,10 +48,10 @@
     />
     <!-- Other scenarios require/are adjusted to the map covering the laboratory with the neighbouring corridor -->
     <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_extended_sim_localization/extended_map_lab_deletions_and_additions.yaml"
-        if="$(eval use_ideal_map == false and (scenario == 'passing_in_front' or scenario == 'overtaking'))"
+        if="$(eval use_ideal_map == false and (scenario == 'passing_in_front' or scenario == 'overtaking' or scenario == 'crossing'))"
     />
     <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_extended_sim_localization/extended_map_ideal_5cm.yaml"
-        if="$(eval use_ideal_map == true and (scenario == 'passing_in_front' or scenario == 'overtaking'))"
+        if="$(eval use_ideal_map == true and (scenario == 'passing_in_front' or scenario == 'overtaking' or scenario == 'crossing'))"
     />
 
     <!-- Goal pose/localization pose selection -->
@@ -97,6 +97,7 @@
         <arg name="world_file_people" if="$(eval scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'passing_in_front')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic_real.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'overtaking')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic_real.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'crossing')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic_real.world"/>
 
         <arg name="pose_sim" if="$(eval scenario == 'full')" value="-x 1.7 -y 5.0 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
         <arg name="pose_sim" if="$(eval scenario == 'short')" value="-x 1.73 -y -1.25 -z -0.003 -R 0.0 -P 0.0 -Y -2.18"/>
@@ -105,6 +106,7 @@
         <arg name="pose_sim" if="$(eval scenario == 'dynamic')" value="-x -1.85 -y -4.00 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
         <arg name="pose_sim" if="$(eval scenario == 'passing_in_front')" value="-x +1.85 -y +4.50 -z -0.003 -R 0.0 -P 0.0 -Y -1.06"/>
         <arg name="pose_sim" if="$(eval scenario == 'overtaking')" value="-x -1.85 -y -4.00 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
+        <arg name="pose_sim" if="$(eval scenario == 'crossing')" value="-x +2.60 -y -4.50 -z -0.003 -R 0.0 -P 0.0 -Y 1.60"/>
 
         <arg name="localization_pose_estimate" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments_sim)/config/012/full/start_amcl$(arg localization_file_suffix).yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'hard')" value="$(find tiago_social_experiments_sim)/config/012/hard/start_amcl$(arg localization_file_suffix).yaml"/>
@@ -113,6 +115,7 @@
         <arg name="localization_pose_estimate" if="$(eval scenario == 'dynamic')" value="$(find tiago_social_experiments_sim)/config/012/undock_amcl$(arg localization_file_suffix).yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'passing_in_front')" value="$(find tiago_social_experiments_sim)/config/012/passing_in_front/start_amcl$(arg localization_file_suffix).yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'overtaking')" value="$(find tiago_social_experiments_sim)/config/012/overtaking/start_amcl$(arg localization_file_suffix).yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'crossing')" value="$(find tiago_social_experiments_sim)/config/012/crossing/start_amcl$(arg localization_file_suffix).yaml"/>
 
         <arg name="shared_map" value="$(arg shared_map)"/>
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>
@@ -129,6 +132,7 @@
         <arg name="goal_file" if="$(eval scenario == 'dynamic')" value="$(find tiago_social_experiments_sim)/config/012/dynamic/finish_pose$(arg goal_file_suffix).yaml"/>
         <arg name="goal_file" if="$(eval scenario == 'passing_in_front')" value="$(find tiago_social_experiments_sim)/config/012/passing_in_front/finish_pose$(arg goal_file_suffix).yaml"/>
         <arg name="goal_file" if="$(eval scenario == 'overtaking')" value="$(find tiago_social_experiments_sim)/config/012/overtaking/finish_pose$(arg goal_file_suffix).yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'crossing')" value="$(find tiago_social_experiments_sim)/config/012/crossing/finish_pose$(arg goal_file_suffix).yaml"/>
     </include>
 
     <!--
@@ -262,5 +266,33 @@
         <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_x" value="0.100"/>
         <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_trans" value="0.175"/>
         <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_x" value="0.175"/>
+    </group>
+
+    <!-- Dynamic scenario in which 2 humans cross/intersect the robot's ideal path to the goal -->
+    <group if="$(eval scenario == 'crossing' and people_sim == true)">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
+            <arg name="actor_name" value="actor1"/>
+            <arg name="pose_x" value="+3.70"/>
+            <arg name="pose_y" value="-1.50"/>
+            <arg name="pose_yaw" value="-1.57"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
+            <arg name="actor_name" value="actor2"/>
+            <arg name="pose_x" value="+1.70"/>
+            <arg name="pose_y" value="+2.45"/>
+            <arg name="pose_yaw" value="+1.57"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <!-- scenario node - orchestrates actors movements -->
+        <node pkg="tiago_social_scenarios_sim" type="lab_012_crossing_hubero" name="lab_012_crossing_hubero" output="screen" args="1 1.9 1.5"/>
     </group>
 </launch>

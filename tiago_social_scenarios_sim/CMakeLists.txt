@@ -41,3 +41,9 @@ target_link_libraries(lab_012_overtaking_hubero
   ${hubero_ros_LIBRARIES}
   ${catkin_LIBRARIES}
 )
+
+add_executable(lab_012_crossing_hubero src/lab_012_crossing_hubero.cpp)
+target_link_libraries(lab_012_crossing_hubero
+  ${hubero_ros_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
