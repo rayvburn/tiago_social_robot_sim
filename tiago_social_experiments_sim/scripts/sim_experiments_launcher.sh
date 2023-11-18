@@ -259,6 +259,8 @@ run_benchmark_experiment_multiple 100 sarl      global_planner_contexts social_e
 run_benchmark_experiment_multiple 100 sarl_star global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
 # 'srl_eband' has a dedicated 'socially_normative' costmap plugins configuration - the main novelty are cost functions placed in the global costmap
 run_benchmark_experiment_multiple 100 srl_eband global_planner_contexts socially_normative passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+# DRL uses a typical costmap plugin configuration
+run_benchmark_experiment_multiple 100 drl       global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
 
 echo ""
 echo "**Finished conducting simulation experiments**"
@@ -284,8 +286,8 @@ echo ""
 $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/aws_hospital-normal/  eband srl_eband eband_original
 echo ""
 
-python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/aws_hospital-normal/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband
+python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/aws_hospital-normal/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband drl
 echo ""
-python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-dynamic/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband
+python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-dynamic/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband drl
 echo ""
-python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-passing_in_front/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband
+python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-passing_in_front/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband drl
