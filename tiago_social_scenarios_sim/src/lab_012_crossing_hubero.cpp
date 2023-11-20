@@ -6,8 +6,7 @@
 
 #include <hubero_common/defines.h>
 #include <hubero_ros/task_request_ros_api.h>
-
-#include <move_base_msgs/MoveBaseActionFeedback.h>
+#include <hubero_ros/task_helpers.h>
 
 using namespace hubero;
 
@@ -18,35 +17,6 @@ const std::string TF_FRAME_REF = "world";
 const auto ROBOT_ACTOR_DISTANCE_THRESHOLD_DEFAULT = 1.0;
 
 const auto TASK_TIMEOUT = ros::Duration(60.0);
-
-void robotMoveFeedbackCb(
-	const move_base_msgs::MoveBaseActionFeedback::ConstPtr& feedback,
-	const hubero::TaskRequestRosApi& actor,
-	const double& robot_actor_distance_threshold,
-	std::atomic<bool>& robot_close_enough
-) {
-	if (robot_close_enough) {
-		// nothing more to do
-		return;
-	}
-
-	// obtain robot pose
-	double x_robot = feedback->feedback.base_position.pose.position.x;
-	double y_robot = feedback->feedback.base_position.pose.position.y;
-	// retrieve actor pose in the robot frame
-	auto robot_frame = feedback->feedback.base_position.header.frame_id;
-	double x_actor = actor.getPose(robot_frame).Pos().X();
-	double y_actor = actor.getPose(robot_frame).Pos().Y();
-	// compute distance between objects
-	double dist = std::sqrt(
-		std::pow(x_robot - x_actor, 2)
-		+ std::pow(y_robot - y_actor, 2)
-	);
-	// if distance is small enough, set the flag
-	if (dist < robot_actor_distance_threshold) {
-		robot_close_enough = true;
-	}
-}
 
 int main(int argc, char** argv) {
 	// node initialization
@@ -72,34 +42,31 @@ int main(int argc, char** argv) {
 	hubero::TaskRequestRosApi actor1("actor1");
 	hubero::TaskRequestRosApi actor2("actor2");
 
-	// variables that will trigger the movement of actors
+	// atomic variables that will trigger the movement of actors
 	std::atomic<bool> robot_close_enough_a1;
-	std::atomic<bool> robot_close_enough_a2;
 	robot_close_enough_a1 = false;
-	robot_close_enough_a2 = false;
-
+	std::function<void()> fun_dist_tracker_robot_a1 = [&robot_close_enough_a1]() {
+		robot_close_enough_a1 = true;
+	};
 	// subscribe robot's movement feedback to trigger the start of movement
-	ros::Subscriber mb_sub_a1 = nh.subscribe<move_base_msgs::MoveBaseActionFeedback>(
-		"/move_base/feedback",
-		5,
-		std::bind(
-			robotMoveFeedbackCb,
-			std::placeholders::_1,
-			std::cref(actor1),
-			std::cref(robot_actor1_distance_threshold),
-			std::ref(robot_close_enough_a1)
-		)
+	auto dist_tracker_robot_a1 = hubero::DistanceTracker(
+		std::cref(actor1),
+		"/mobile_base_controller/odom",
+		std::cref(robot_actor1_distance_threshold),
+		std::ref(fun_dist_tracker_robot_a1)
 	);
-	ros::Subscriber mb_sub_a2 = nh.subscribe<move_base_msgs::MoveBaseActionFeedback>(
-		"/move_base/feedback",
-		5,
-		std::bind(
-			robotMoveFeedbackCb,
-			std::placeholders::_1,
-			std::cref(actor2),
-			std::cref(robot_actor2_distance_threshold),
-			std::ref(robot_close_enough_a2)
-		)
+
+	std::atomic<bool> robot_close_enough_a2;
+	robot_close_enough_a2 = false;
+	std::function<void()> fun_dist_tracker_robot_a2 = [&robot_close_enough_a2]() {
+		robot_close_enough_a2 = true;
+	};
+	// subscribe robot's movement feedback to trigger the start of movement
+	auto dist_tracker_robot_a2 = hubero::DistanceTracker(
+		std::cref(actor2),
+		"/mobile_base_controller/odom",
+		std::cref(robot_actor2_distance_threshold),
+		std::ref(fun_dist_tracker_robot_a2)
 	);
 
 	// wait
@@ -140,6 +107,8 @@ int main(int argc, char** argv) {
 
 	actor1.join();
 	actor2.join();
+	dist_tracker_robot_a1.getThread().join();
+	dist_tracker_robot_a2.getThread().join();
 
 	ROS_INFO("Scenario operation finished!");
 	return 0;
