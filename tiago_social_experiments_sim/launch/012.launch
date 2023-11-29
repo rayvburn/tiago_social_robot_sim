@@ -297,6 +297,6 @@
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
         <!-- scenario node - orchestrates actors movements -->
-        <node pkg="tiago_social_scenarios_sim" type="lab_012_crossing_hubero" name="lab_012_crossing_hubero" output="screen" args="1 1.9 1.5"/>
+        <node pkg="tiago_social_scenarios_sim" type="lab_012_crossing_hubero" name="lab_012_crossing_hubero" output="screen" args="1 2.1 1.7"/>
     </group>
 </launch>

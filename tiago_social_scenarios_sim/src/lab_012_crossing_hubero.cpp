@@ -30,23 +30,37 @@ int main(int argc, char** argv) {
 	}
 
 	double robot_actor1_distance_threshold = ROBOT_ACTOR_DISTANCE_THRESHOLD_DEFAULT;
-	double robot_actor2_distance_threshold = ROBOT_ACTOR_DISTANCE_THRESHOLD_DEFAULT;
 	if (argc >= 3) {
 		robot_actor1_distance_threshold = std::stod(argv[2]);
 	}
+	double robot_actor2_distance_threshold = ROBOT_ACTOR_DISTANCE_THRESHOLD_DEFAULT;
 	if (argc >= 4) {
 		robot_actor2_distance_threshold = std::stod(argv[3]);
 	}
+	ROS_INFO(
+		"actor1's movement will start once the robot violates the %f m distance threshold between them",
+		robot_actor1_distance_threshold
+	);
+	ROS_INFO(
+		"actor2's movement will start once the robot violates the %f m distance threshold between them",
+		robot_actor2_distance_threshold
+	);
 
 	// create interfaces to request tasks from actors
 	hubero::TaskRequestRosApi actor1("actor1");
 	hubero::TaskRequestRosApi actor2("actor2");
 
-	// atomic variables that will trigger the movement of actors
-	std::atomic<bool> robot_close_enough_a1;
-	robot_close_enough_a1 = false;
-	std::function<void()> fun_dist_tracker_robot_a1 = [&robot_close_enough_a1]() {
-		robot_close_enough_a1 = true;
+	ROS_INFO("TaskRequestRos APIs fired up, scenario execution will start in %lu seconds", launch_delay);
+	hubero::TaskRequestRosApi::waitRosTime(launch_delay);
+
+	// prep execution
+	std::function<TaskFeedbackType()> a1_feedback_checker = [&actor1]() -> hubero::TaskFeedbackType {
+		return actor1.getMoveToGoalState();
+	};
+	std::function<void()> fun_dist_tracker_robot_a1 = [&actor1, &a1_feedback_checker]() {
+		ROS_INFO("[SCENARIO] 'actor1' is going to intersect the reference path of the robot");
+		actor1.moveToGoal(Vector3(+0.7, -1.4, 0.0), -2.0 - IGN_PI_2, TF_FRAME_REF);
+		actor1.startThreadedExecution(std::cref(a1_feedback_checker), "moveToGoal", TASK_TIMEOUT);
 	};
 	// subscribe robot's movement feedback to trigger the start of movement
 	auto dist_tracker_robot_a1 = hubero::DistanceTracker(
@@ -56,10 +70,14 @@ int main(int argc, char** argv) {
 		std::ref(fun_dist_tracker_robot_a1)
 	);
 
-	std::atomic<bool> robot_close_enough_a2;
-	robot_close_enough_a2 = false;
-	std::function<void()> fun_dist_tracker_robot_a2 = [&robot_close_enough_a2]() {
-		robot_close_enough_a2 = true;
+	// prep execution
+	std::function<TaskFeedbackType()> a2_feedback_checker = [&actor2]() -> hubero::TaskFeedbackType {
+		return actor2.getMoveToGoalState();
+	};
+	std::function<void()> fun_dist_tracker_robot_a2 = [&actor2, &a2_feedback_checker]() {
+		ROS_INFO("[SCENARIO] 'actor2' is going to intersect the reference path of the robot");
+		actor2.moveToGoal(Vector3(+2.75, +2.65, 0.0), +1.57 - IGN_PI_2, TF_FRAME_REF);
+		actor2.startThreadedExecution(std::cref(a2_feedback_checker), "moveToGoal", TASK_TIMEOUT);
 	};
 	// subscribe robot's movement feedback to trigger the start of movement
 	auto dist_tracker_robot_a2 = hubero::DistanceTracker(
@@ -69,46 +87,14 @@ int main(int argc, char** argv) {
 		std::ref(fun_dist_tracker_robot_a2)
 	);
 
-	// wait
-	ROS_INFO(
-		"Actor1's movement will start once the robot violates the %f m distance threshold between them",
-		robot_actor1_distance_threshold
-	);
-	ROS_INFO(
-		"Actor2's movement will start once the robot violates the %f m distance threshold between them",
-		robot_actor2_distance_threshold
-	);
-	ROS_INFO("TaskRequestRos APIs fired up, scenario execution will start in %lu seconds", launch_delay);
-	hubero::TaskRequestRosApi::waitRosTime(launch_delay);
+	ROS_INFO("[SCENARIO] Firing up the execution! Waiting until the robot gets closer to the 'actor1' and `actor2`");
 
-	// prep execution
-	std::function<TaskFeedbackType()> a1_feedback_checker = [&actor1]() -> hubero::TaskFeedbackType {
-		return actor1.getMoveToGoalState();
-	};
-	std::function<TaskFeedbackType()> a2_feedback_checker = [&actor2]() -> hubero::TaskFeedbackType {
-		return actor2.getMoveToGoalState();
-	};
-
-	ROS_INFO("[SCENARIO] Firing up the execution! Waiting until the robot gets closer to the 'actor1'");
-
-	while (!robot_close_enough_a1) {
-		hubero::TaskRequestRosApi::waitRosTime(0.1);
-	}
-	ROS_INFO("[SCENARIO] 'actor1' is going to intersect the reference path of the robot");
-	actor1.moveToGoal(Vector3(+0.7, -1.4, 0.0), -2.0 - IGN_PI_2, TF_FRAME_REF);
-	actor1.startThreadedExecution(std::cref(a1_feedback_checker), "moveToGoal", TASK_TIMEOUT);
-
-	while (!robot_close_enough_a2) {
-		hubero::TaskRequestRosApi::waitRosTime(0.1);
-	}
-	ROS_INFO("[SCENARIO] 'actor2' is going to intersect the reference path of the robot");
-	actor2.moveToGoal(Vector3(+2.75, +2.65, 0.0), +1.57 - IGN_PI_2, TF_FRAME_REF);
-	actor2.startThreadedExecution(std::cref(a2_feedback_checker), "moveToGoal", TASK_TIMEOUT);
-
-	actor1.join();
-	actor2.join();
+	// order of `joins` matters as the `wp_follow_handler` may not be properly constructed when accessed before
+	// a `dist_tracker`
 	dist_tracker_robot_a1.getThread().join();
 	dist_tracker_robot_a2.getThread().join();
+	actor1.join();
+	actor2.join();
 
 	ROS_INFO("Scenario operation finished!");
 	return 0;
