@@ -60,7 +60,7 @@
     <arg name="localization_file_suffix" if="$(arg use_ideal_map)" value="_map_ideal"/>
     <arg name="localization_file_suffix" unless="$(arg use_ideal_map)" value=""/>
 
-    <arg name="allow_clearing_map_obstacles" default="true"/>
+    <arg name="allow_clearing_map_obstacles" default="false"/>
     <arg name="map_frame" default="map"/>
     <arg name="map_bounds" value="[-2.49, 5.86, -2.74, 10.30]"/>
 
