@@ -87,7 +87,7 @@
         <arg name="run_plot" value="$(arg run_plot)"/>
         <arg name="publish_goal" value="$(arg publish_goal)"/>
         <arg name="publish_goal_delay" if="$(eval scenario == 'dynamic')" value="$(eval {'titanium': '110', 'steel': '110', 'iron': '70'}.get(arg('robot_type'), '70'))"/>
-        <arg name="publish_goal_delay" if="$(eval scenario == 'overtaking')" value="$(eval {'titanium': '60', 'steel': '60', 'iron': '60'}.get(arg('robot_type'), '25'))"/>
+        <arg name="publish_goal_delay" if="$(eval scenario == 'overtaking')" value="$(eval {'titanium': '30', 'steel': '30', 'iron': '30'}.get(arg('robot_type'), '25'))"/>
 
         <!-- For scenarios from SRPB evaluation (backward compatibility) -->
         <arg name="world_file_wo_people" if="$(eval scenario == 'full' or scenario == 'short' or scenario == 'hard' or scenario == 'static' or scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
@@ -240,9 +240,9 @@
     <group if="$(eval scenario == 'overtaking' and people_sim == true)">
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="pose_x" value="+0.85"/>
-            <arg name="pose_y" value="-2.30"/>
-            <arg name="pose_yaw" value="+2.60"/>
+            <arg name="pose_x" value="+0.70"/>
+            <arg name="pose_y" value="-1.40"/>
+            <arg name="pose_yaw" value="+2.00"/>
             <arg name="map_file" value="$(arg map_file)"/>
             <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
@@ -252,8 +252,8 @@
         </include>
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor2"/>
-            <arg name="pose_x" value="+1.95"/>
-            <arg name="pose_y" value="+0.30"/>
+            <arg name="pose_x" value="+2.80"/>
+            <arg name="pose_y" value="+1.00"/>
             <arg name="pose_yaw" value="+3.14"/>
             <arg name="map_file" value="$(arg map_file)"/>
             <arg name="shared_map" value="$(arg shared_map)"/>
@@ -263,13 +263,13 @@
             <arg name="local_planner" value="teb"/>
         </include>
         <!-- scenario node - orchestrates actors movements -->
-        <node pkg="tiago_social_scenarios_sim" type="lab_012_overtaking_hubero" name="lab_012_overtaking_hubero" output="screen" args="1 1.5"/>
+        <node pkg="tiago_social_scenarios_sim" type="lab_012_overtaking_hubero" name="lab_012_overtaking_hubero" output="screen" args="1 3.3 3.2"/>
         <!-- Update kinematic constraints of the actors so the will be able to pass them -->
         <!-- Overriding parameters of the selected trajectory planner, reduce the maximum linear speed -->
-        <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_trans" value="0.100"/>
-        <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_x" value="0.100"/>
-        <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_trans" value="0.175"/>
-        <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_x" value="0.175"/>
+        <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_trans" value="0.15"/>
+        <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_x" value="0.15"/>
+        <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_trans" value="0.10"/>
+        <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_x" value="0.10"/>
     </group>
 
     <!-- Dynamic scenario in which 2 humans cross/intersect the robot's ideal path to the goal -->
