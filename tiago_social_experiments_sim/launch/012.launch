@@ -89,7 +89,11 @@
         <arg name="publish_goal_delay" if="$(eval scenario == 'dynamic')" value="$(eval {'titanium': '110', 'steel': '110', 'iron': '70'}.get(arg('robot_type'), '70'))"/>
         <arg name="publish_goal_delay" if="$(eval scenario == 'overtaking')" value="$(eval {'titanium': '60', 'steel': '60', 'iron': '60'}.get(arg('robot_type'), '25'))"/>
 
-        <arg name="world_file_wo_people" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+        <!-- For scenarios from SRPB evaluation (backward compatibility) -->
+        <arg name="world_file_wo_people" if="$(eval scenario == 'full' or scenario == 'short' or scenario == 'hard' or scenario == 'static' or scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
+        <!-- For scenarios from planners experiments -->
+        <arg name="world_file_wo_people" unless="$(eval scenario == 'full' or scenario == 'short' or scenario == 'hard' or scenario == 'static' or scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic_real.world"/>
+
         <arg name="world_file_people" if="$(eval scenario == 'full')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'short')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'hard')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
