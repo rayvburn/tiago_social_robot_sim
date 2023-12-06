@@ -216,78 +216,114 @@ run_benchmark_experiment_multiple() {
     done
 }
 
+### 'Main' ###
+# Arrays with scenarios to evaluate
+# NOTE: timeouts for the specific scenarios are expressed as ROS Time in seconds
 
-# Main
-echo ""
-echo "**Starting the experiments**"
-echo ""
+# declare array variables
+declare -a scenarios=("hall_passing_group" "passing_in_front" "overtaking" "crossing")
+declare -a launches=( "012.launch"         "012.launch"       "012.launch" "012.launch")
+declare -a timeouts=( "70"                 "90"               "80"         "90")
+
+# compare the lengths of the arrays
+scenarios_num=${#scenarios[@]}
+launches_num=${#launches[@]}
+timeouts_num=${#timeouts[@]}
+if [ "$scenarios_num" -ne "$launches_num" ] || [ "$scenarios_num" -ne "$timeouts_num" ]; then
+    echo "'scenarios', 'launches' and 'timeouts' arrays must have the same length, whereas: "
+    echo "  'scenarios' array has $scenarios_num elements"
+    echo "  'launches' array has $launches_num elements"
+    echo "  'timeouts' array has $timeouts_num elements"
+    echo "Aborting"
+    exit 1
+fi
 
 # SRPB stuff
+## must match the main directory given in the `log_filename` parameter to the `srpb_move_base` node
 readonly LOGS_SOURCE_DIR=$HOME/srpb_logs
+## defines where logs will be grouped in directories and where metric results will be saved
 readonly LOGS_TARGET_DIR=$HOME/srpb_logs_automation
+
+mkdir -p "$LOGS_SOURCE_DIR"
+mkdir -p "$LOGS_TARGET_DIR"
 
 # how many times each planner will be evaluated
 readonly TRIALS_NUM=8
-# timeouts for the specific scenarios are expressed as ROS Time in seconds
 
-# Scenarios to evaluate
-run_benchmark_experiment_multiple 140 teb       global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 dwa       global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 cohan     global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 hateb     global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 hubero    global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 cadrl     global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 sarl      global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 240 sarl_star global_planner_contexts social_extended normal aws_hospital.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-
-run_benchmark_experiment_multiple 70 teb       global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 dwa       global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 cohan     global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 hateb     global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 hubero    global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 cadrl     global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 sarl      global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 70 sarl_star global_planner_contexts social_extended dynamic 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-
-run_benchmark_experiment_multiple 100 teb       global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 dwa       global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 cohan     global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 hateb     global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 hubero    global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 cadrl     global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 sarl      global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-run_benchmark_experiment_multiple 100 sarl_star global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+# default configuration of the global planner
+gplanner_cfg_default="global_planner_contexts"
+# default configuration of the costmap layers (related to local and global costmaps)
+costmap_contexts_cfg_default="social_extended"
 # 'srl_eband' has a dedicated 'socially_normative' costmap plugins configuration - the main novelty are cost functions placed in the global costmap
-run_benchmark_experiment_multiple 100 srl_eband global_planner_contexts socially_normative passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-# DRL uses a typical costmap plugin configuration
-run_benchmark_experiment_multiple 100 drl       global_planner_contexts social_extended passing_in_front 012.launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+costmap_contexts_cfg_srl_eband="socially_normative"
+
+echo ""
+echo "**Starting the experiments**"
+echo ""
+# use for loop to read all values and indexes
+for (( i=0; i<${scenarios_num}; i++ )); do
+    echo "**New scenarios loop iteration**"
+    scenario="${scenarios[$i]}"
+    experiment_launch="${launches[$i]}"
+    timeout="${timeouts[$i]}"
+    echo "  index: '$i', scenario: '$scenario', launch: '$experiment_launch', timeout: '$timeout'"
+
+    # run the scenario with subsequent local trajectory planners
+    run_benchmark_experiment_multiple $timeout teb          $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout trajectory   $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout dwa          $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout cohan        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout hateb        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout hubero       $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout cadrl        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout sarl         $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout sarl_star    $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout drl          $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout drl_vo       $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout srl_eband    $gplanner_cfg_default $costmap_contexts_cfg_srl_eband $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+done
+
 
 echo ""
 echo "**Finished conducting simulation experiments**"
 echo ""
+
+echo "**Preprocessing**"
+echo "  Attempting to differentiate planner directories to avoid the wrong recognition by their names"
+echo ""
+for (( i=0; i<${scenarios_num}; i++ )); do
+    scenario="${scenarios[$i]}"
+    experiment_launch="${launches[$i]}"
+    scenario_type=$(get_scenario_type $scenario $experiment_launch)
+    if [ ! -d "${LOGS_TARGET_DIR}/${scenario_type}" ]; then
+        echo "Attempted a cleanup of log directories for the '$scenario_type' scenario type but a directory '${LOGS_TARGET_DIR}/${scenario_type}' does not exist. Skipping"
+        continue
+    fi
+
+    # extra dash to not mess up any other directories (e.g., drl and cadrl)
+    $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -sarl -sarl_star -sarl_original
+    $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -eband -srl_eband -eband_original
+    $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -drl -drl_vo -drl_rgring
+done
+
 echo ""
 echo "**Creating spreadsheets with the results**"
 echo ""
+for (( i=0; i<${scenarios_num}; i++ )); do
+    scenario="${scenarios[$i]}"
+    experiment_launch="${launches[$i]}"
+    scenario_type=$(get_scenario_type $scenario $experiment_launch)
 
-echo "Preprocessing - differentiate planner directories to avoid the wrong recognition by the name"
-echo "Preprocessing to differentiate 'sarl' and 'sarl_star' planners"
-$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/012-dynamic/          sarl sarl_star sarl_original
-echo ""
-$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/012-passing_in_front/ sarl sarl_star sarl_original
-echo ""
-$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/aws_hospital-normal/  sarl sarl_star sarl_original
-echo ""
+    if [ ! -d "${LOGS_TARGET_DIR}/${scenario_type}" ]; then
+        echo "Attempted to create a SRPB results spreadsheet for the '$scenario_type' scenario type but a directory '${LOGS_TARGET_DIR}/${scenario_type}' does not exist. Skipping"
+        continue
+    fi
 
-echo "Preprocessing to differentiate 'eband' and 'srl_eband' planners"
-$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/012-dynamic/          eband srl_eband eband_original
-echo ""
-$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/012-passing_in_front/ eband srl_eband eband_original
-echo ""
-$(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/aws_hospital-normal/  eband srl_eband eband_original
-echo ""
+    # creates a spreadsheet from the logs that are inside directories matching the following patterns (planner names)
+    python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py \
+        ${LOGS_TARGET_DIR}/${scenario_type}/ \
+        teb trajectory dwa cohan hateb hubero cadrl sarl_original sarl_star drl_rgring drl_vo srl_eband
+done
 
-python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/aws_hospital-normal/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband drl
-echo ""
-python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-dynamic/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband drl
-echo ""
-python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py ${LOGS_TARGET_DIR}/012-passing_in_front/ teb dwa cohan hateb hubero cadrl sarl_original sarl_star srl_eband drl
+echo "**Finished**"
+exit 0
