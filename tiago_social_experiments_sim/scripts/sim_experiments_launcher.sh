@@ -270,6 +270,7 @@ for (( i=0; i<${scenarios_num}; i++ )); do
 
     # run the scenario with subsequent local trajectory planners
     run_benchmark_experiment_multiple $timeout teb          $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout eband        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout trajectory   $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout dwa          $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout cohan        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
@@ -301,8 +302,8 @@ for (( i=0; i<${scenarios_num}; i++ )); do
     fi
 
     # extra dash to not mess up any other directories (e.g., drl and cadrl)
-    $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -sarl -sarl_star -sarl_original
     $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -eband -srl_eband -eband_original
+    $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -sarl -sarl_star -sarl_original
     $(rospack find srpb_evaluation)/scripts/rename_dirs_matching_pattern.sh ${LOGS_TARGET_DIR}/${scenario_type}/ -drl -drl_vo -drl_rgring
 done
 
@@ -322,7 +323,7 @@ for (( i=0; i<${scenarios_num}; i++ )); do
     # creates a spreadsheet from the logs that are inside directories matching the following patterns (planner names)
     python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py \
         ${LOGS_TARGET_DIR}/${scenario_type}/ \
-        teb trajectory dwa cohan hateb hubero cadrl sarl_original sarl_star drl_rgring drl_vo srl_eband
+        teb eband_original trajectory dwa cohan hateb hubero cadrl sarl_original sarl_star drl_rgring drl_vo srl_eband
 done
 
 echo "**Finished**"
