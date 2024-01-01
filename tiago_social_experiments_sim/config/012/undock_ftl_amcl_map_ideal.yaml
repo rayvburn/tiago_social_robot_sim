@@ -1,0 +1,10 @@
+# pose of the undocked robot;
+# valid for a docking station located as in "follow the line board", a.k.a. "v3" world version
+{
+  initial_cov_aa: 0.02,
+  initial_cov_xx: 0.01,
+  initial_cov_yy: 0.01,
+  initial_pose_a: 0.0,
+  initial_pose_x: +1.70,
+  initial_pose_y: +2.715
+}

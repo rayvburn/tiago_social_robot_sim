@@ -2,7 +2,7 @@
   initial_cov_aa: 0.06,
   initial_cov_xx: 0.01,
   initial_cov_yy: 0.02,
-  initial_pose_a: 0.2591599225993756,
-  initial_pose_x: -1.0266430378,
-  initial_pose_y: 0.141307115555
+  initial_pose_a: 2.983,
+  initial_pose_x: 0.191,
+  initial_pose_y: -1.298
 }
