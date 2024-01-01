@@ -4,8 +4,8 @@ header:
   frame_id: 'map'
 pose:
   position:
-    x: 1.21599735
-    y: 4.6947104
+    x: 0.904
+    y: 4.753
     z: 0.0
   orientation:
     x: 0.0

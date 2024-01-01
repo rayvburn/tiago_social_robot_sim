@@ -3,6 +3,6 @@
   initial_cov_xx: 0.01,
   initial_cov_yy: 0.02,
   initial_pose_a: +1.57,
-  initial_pose_x: +7.35,
-  initial_pose_y: +1.70
+  initial_pose_x: +7.267,
+  initial_pose_y: +1.731
 }
