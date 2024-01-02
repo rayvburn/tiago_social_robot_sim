@@ -16,7 +16,7 @@
     <arg name="navigation_benchmark" default="true"/>
 
     <arg name="global_planner" default="navfn"/>
-    <arg name="local_planner" default="hubero"/>
+    <arg name="local_planner" default="humap"/>
     <arg name="costmap_contexts" default="social"/>
     <arg name="nav_state" default="localization"/>
 

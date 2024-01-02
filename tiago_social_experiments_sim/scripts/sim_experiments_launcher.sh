@@ -275,7 +275,7 @@ for (( i=0; i<${scenarios_num}; i++ )); do
     run_benchmark_experiment_multiple $timeout dwa          $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout cohan        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout hateb        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
-    run_benchmark_experiment_multiple $timeout hubero       $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
+    run_benchmark_experiment_multiple $timeout humap        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout cadrl        $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout sarl         $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
     run_benchmark_experiment_multiple $timeout sarl_star    $gplanner_cfg_default $costmap_contexts_cfg_default   $scenario $experiment_launch $LOGS_SOURCE_DIR $LOGS_TARGET_DIR $TRIALS_NUM
@@ -323,7 +323,7 @@ for (( i=0; i<${scenarios_num}; i++ )); do
     # creates a spreadsheet from the logs that are inside directories matching the following patterns (planner names)
     python3 $(rospack find srpb_evaluation)/scripts/create_excel_from_results.py \
         ${LOGS_TARGET_DIR}/${scenario_type}/ \
-        teb eband_original trajectory dwa cohan hateb hubero cadrl sarl_original sarl_star drl_rgring drl_vo srl_eband
+        teb eband_original trajectory dwa cohan hateb humap cadrl sarl_original sarl_star drl_rgring drl_vo srl_eband
 done
 
 echo "**Finished**"
