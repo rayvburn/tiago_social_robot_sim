@@ -56,3 +56,21 @@ Goal poses can also be published manually, e.g.:
 ```sh
 rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped --file $(rospack find tiago_social_experiments_sim)/config/012/static/finish_pose.yaml --once --latch
 ```
+
+## Evaluation (part 2)
+
+Second part of the evaluation experiments is related to a verification of the previously evaluated trajectory planners extended with verification of the novel human-aware trajectory planner (`humap`) and numerous ML-based planners (mostly RL-based). The remaining part of the section contains launch instructions for the `012` scenario.
+
+Most trajectory planners (`local_planner`) can be launched in different scenarios (`scenario`) using the following command:
+
+```sh
+roslaunch tiago_social_experiments_sim 012.launch local_planner:=(eband|dwa|trajectory|teb|hateb|cohan|humap|cadrl|sarl|sarl_star|drl|drl_vo) global_planner:=global_planner navigation_benchmark:=true perception_launch:=true publish_goal:=true costmap_contexts:=social_extended run_reconfigure:=true use_ideal_map:=false scenario:=(hall_passing_group|passing_in_front|overtaking|crossing)
+```
+
+Only the `srl_eband` is different as it is intended to operate with a dedicated costmaps configuration (`costmap_contexts`). It can be launched with:
+
+```sh
+roslaunch tiago_social_experiments_sim 012.launch local_planner:=srl_eband global_planner:=global_planner navigation_benchmark:=true perception_launch:=true publish_goal:=true costmap_contexts:=socially_normative run_reconfigure:=true use_ideal_map:=false scenario:=(hall_passing_group|passing_in_front|overtaking|crossing)
+```
+
+See the relevant `.launch` files for different options for the, e.g., `global_planner` and `costmap_contexts` parameters.
