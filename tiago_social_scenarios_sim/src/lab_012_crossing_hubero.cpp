@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	};
 	std::function<void()> fun_dist_tracker_robot_a2 = [&actor2, &a2_feedback_checker]() {
 		ROS_INFO("[SCENARIO] 'actor2' is going to intersect the reference path of the robot");
-		actor2.moveToGoal(Vector3(+2.75, +2.65, 0.0), +1.57 - IGN_PI_2, TF_FRAME_REF);
+		actor2.moveToGoal(Vector3(+2.85, +2.45, 0.0), +1.57 - IGN_PI_2, TF_FRAME_REF);
 		actor2.startThreadedExecution(std::cref(a2_feedback_checker), "moveToGoal", TASK_TIMEOUT);
 	};
 	// subscribe robot's movement feedback to trigger the start of movement

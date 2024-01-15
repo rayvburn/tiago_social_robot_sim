@@ -47,10 +47,10 @@
         if="$(eval use_ideal_map == true and (scenario == 'full' or scenario == 'short' or scenario == 'hard' or scenario == 'static' or scenario == 'dynamic'))"
     />
     <!-- Other scenarios require/are adjusted to the map covering the laboratory with the neighbouring corridor -->
-    <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_extended_ftl_sim_localization/extended_map_lab_deletions_and_additions.yaml"
+    <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_extended_ftl_sim_and_real_localization/extended_map_lab_adjusted_dimensions.yaml"
         if="$(eval use_ideal_map == false and (scenario == 'passing_in_front' or scenario == 'overtaking' or scenario == 'crossing' or scenario == 'hall_passing_group'))"
     />
-    <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_extended_ftl_sim_localization/extended_map_ideal_5cm.yaml"
+    <arg name="map_file" value="$(find tiago_sim_integration)/maps/012_extended_ftl_sim_and_real_localization/extended_map_ideal_5cm.yaml"
         if="$(eval use_ideal_map == true and (scenario == 'passing_in_front' or scenario == 'overtaking' or scenario == 'crossing' or scenario == 'hall_passing_group'))"
     />
 
@@ -87,7 +87,8 @@
         <arg name="run_plot" value="$(arg run_plot)"/>
         <arg name="publish_goal" value="$(arg publish_goal)"/>
         <arg name="publish_goal_delay" if="$(eval scenario == 'dynamic')" value="$(eval {'titanium': '110', 'steel': '110', 'iron': '70'}.get(arg('robot_type'), '70'))"/>
-        <arg name="publish_goal_delay" if="$(eval scenario == 'overtaking')" value="$(eval {'titanium': '30', 'steel': '30', 'iron': '30'}.get(arg('robot_type'), '25'))"/>
+        <!-- Increased the delay as the srl_eband trajectory planner could not process the request when it is sent earlier -->
+        <arg name="publish_goal_delay" unless="$(eval scenario == 'dynamic')" value="$(eval {'titanium': '60', 'steel': '60', 'iron': '18'}.get(arg('robot_type'), '18'))"/>
 
         <!-- For scenarios from SRPB evaluation (backward compatibility) -->
         <arg name="world_file_wo_people" if="$(eval scenario == 'full' or scenario == 'short' or scenario == 'hard' or scenario == 'static' or scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
@@ -99,10 +100,10 @@
         <arg name="world_file_people" if="$(eval scenario == 'hard')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'static')" value="$(find tiago_sim_integration)/worlds/lab_012_v2.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'dynamic')" value="$(find tiago_sim_integration)/worlds/lab_012_v2_dynamic.world"/>
-        <arg name="world_file_people" if="$(eval scenario == 'passing_in_front')" value="$(find tiago_sim_integration)/worlds/lab_012_v3.world"/>
-        <arg name="world_file_people" if="$(eval scenario == 'overtaking')" value="$(find tiago_sim_integration)/worlds/lab_012_v3.world"/>
-        <arg name="world_file_people" if="$(eval scenario == 'crossing')" value="$(find tiago_sim_integration)/worlds/lab_012_v3.world"/>
-        <arg name="world_file_people" if="$(eval scenario == 'hall_passing_group')" value="$(find tiago_sim_integration)/worlds/lab_012_v3_extended.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'passing_in_front')" value="$(find tiago_sim_integration)/worlds/lab_012_v4.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'overtaking')" value="$(find tiago_sim_integration)/worlds/lab_012_v4.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'crossing')" value="$(find tiago_sim_integration)/worlds/lab_012_v4.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'hall_passing_group')" value="$(find tiago_sim_integration)/worlds/lab_012_v4_extended.world"/>
 
         <arg name="pose_sim" if="$(eval scenario == 'full')" value="-x 1.7 -y 5.0 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
         <arg name="pose_sim" if="$(eval scenario == 'short')" value="-x 1.73 -y -1.25 -z -0.003 -R 0.0 -P 0.0 -Y -2.18"/>
@@ -111,7 +112,7 @@
         <arg name="pose_sim" if="$(eval scenario == 'dynamic')" value="-x -1.85 -y -4.00 -z -0.003 -R 0.0 -P 0.0 -Y 0.0"/>
         <arg name="pose_sim" if="$(eval scenario == 'passing_in_front')" value="-x +1.85 -y +4.50 -z -0.003 -R 0.0 -P 0.0 -Y -1.06"/>
         <arg name="pose_sim" if="$(eval scenario == 'overtaking')" value="-x +0.25 -y -5.10 -z -0.003 -R 0.0 -P 0.0 -Y 1.5708"/>
-        <arg name="pose_sim" if="$(eval scenario == 'crossing')" value="-x +2.60 -y -4.50 -z -0.003 -R 0.0 -P 0.0 -Y 1.60"/>
+        <arg name="pose_sim" if="$(eval scenario == 'crossing')" value="-x +2.70 -y -4.50 -z -0.003 -R 0.0 -P 0.0 -Y 1.60"/>
         <arg name="pose_sim" if="$(eval scenario == 'hall_passing_group')" value="-x +7.00 -y -6.00 -z -0.003 -R 0.0 -P 0.0 -Y 1.5708"/>
 
         <arg name="localization_pose_estimate" if="$(eval scenario == 'full')" value="$(find tiago_social_experiments_sim)/config/012/full/start_amcl$(arg localization_file_suffix).yaml"/>
@@ -216,7 +217,7 @@
     <group if="$(eval scenario == 'passing_in_front' and people_sim == true)">
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="pose_x" value="+2.5"/>
+            <arg name="pose_x" value="+2.65"/>
             <arg name="pose_y" value="-1.0"/>
             <arg name="pose_yaw" value="+3.14"/>
             <arg name="map_file" value="$(arg map_file)"/>
@@ -280,7 +281,7 @@
     <group if="$(eval scenario == 'crossing' and people_sim == true)">
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="pose_x" value="+3.70"/>
+            <arg name="pose_x" value="+3.75"/>
             <arg name="pose_y" value="-1.50"/>
             <arg name="pose_yaw" value="-1.57"/>
             <arg name="map_file" value="$(arg map_file)"/>
@@ -307,7 +308,7 @@
     <group if="$(eval scenario == 'hall_passing_group' and people_sim == true)">
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="pose_x" value="+7.70"/>
+            <arg name="pose_x" value="+7.85"/>
             <arg name="pose_y" value="-0.60"/>
             <arg name="pose_yaw" value="-1.57"/>
             <arg name="map_file" value="$(arg map_file)"/>
@@ -318,7 +319,7 @@
         </include>
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor2"/>
-            <arg name="pose_x" value="+6.60"/>
+            <arg name="pose_x" value="+6.75"/>
             <arg name="pose_y" value="-0.50"/>
             <arg name="pose_yaw" value="+1.57"/>
             <arg name="map_file" value="$(arg map_file)"/>

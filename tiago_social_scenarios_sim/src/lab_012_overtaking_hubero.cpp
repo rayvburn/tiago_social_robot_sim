@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
 	ROS_INFO("[SCENARIO] Actor2 starts moving through waypoints");
 	std::thread a2_wp_follow_handler = actor2.moveThroughWaypoints(
 		std::vector<std::pair<Vector3, double>>{
-			{{+2.35, +5.00, 0.00}, +3.14 - IGN_PI_2}  // near the workshop
+			{{+2.65, +5.00, 0.00}, +3.14 - IGN_PI_2}  // near the workshop
 		},
 		TF_FRAME_REF
 	);

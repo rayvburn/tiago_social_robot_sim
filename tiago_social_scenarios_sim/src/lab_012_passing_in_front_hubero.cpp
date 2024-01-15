@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 		ROS_INFO("[SCENARIO] Firing up the execution! The Actor1 will approach his goal pose");
 		a1_wp_follow_handler = actor1.moveThroughWaypoints(
 			std::vector<std::pair<Vector3, double>>{
-				{{+2.70, +3.20, 0.00}, -2.90 - IGN_PI_2}, // near the pillar in the workshop area (on the right)
+				{{+2.80, +3.20, 0.00}, -2.90 - IGN_PI_2}, // near the pillar in the workshop area (on the right)
 				{{-1.60, +4.50, 0.00}, -1.57 - IGN_PI_2}  // workshop area
 			},
 			TF_FRAME_REF
