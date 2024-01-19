@@ -281,7 +281,7 @@
     <group if="$(eval scenario == 'crossing' and people_sim == true)">
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor1"/>
-            <arg name="pose_x" value="+3.75"/>
+            <arg name="pose_x" value="+3.45"/>
             <arg name="pose_y" value="-1.50"/>
             <arg name="pose_yaw" value="-1.57"/>
             <arg name="map_file" value="$(arg map_file)"/>
@@ -289,10 +289,11 @@
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="map_bounds" value="$(arg map_bounds)"/>
+            <arg name="local_planner" value="teb"/>
         </include>
         <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
             <arg name="actor_name" value="actor2"/>
-            <arg name="pose_x" value="+1.70"/>
+            <arg name="pose_x" value="+1.80"/>
             <arg name="pose_y" value="+2.45"/>
             <arg name="pose_yaw" value="+1.57"/>
             <arg name="map_file" value="$(arg map_file)"/>
@@ -300,9 +301,19 @@
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="map_bounds" value="$(arg map_bounds)"/>
+            <arg name="local_planner" value="teb"/>
         </include>
         <!-- scenario node - orchestrates actors movements -->
-        <node pkg="tiago_social_scenarios_sim" type="lab_012_crossing_hubero" name="lab_012_crossing_hubero" output="screen" args="1 2.1 1.7"/>
+        <!--
+            NOTE: In real experiments, the distance thresholds should be 10-15 cm smaller as the simulated actors start
+            pretty slowly, whereas, in real-world experiments, humans move with constant velocities
+        -->
+        <node pkg="tiago_social_scenarios_sim" type="lab_012_crossing_hubero" name="lab_012_crossing_hubero" output="screen" args="1 2.7 2.3"/>
+        <!-- Overriding parameters of the selected trajectory planner, reduce the maximum linear speed -->
+        <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_trans" value="0.30"/>
+        <param name="/hubero/actor1/navigation/TebLocalPlannerROS/max_vel_x" value="0.30"/>
+        <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_trans" value="0.25"/>
+        <param name="/hubero/actor2/navigation/TebLocalPlannerROS/max_vel_x" value="0.25"/>
     </group>
 
     <group if="$(eval scenario == 'hall_passing_group' and people_sim == true)">
