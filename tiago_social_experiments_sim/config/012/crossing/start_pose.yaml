@@ -3,12 +3,12 @@ header:
   stamp: now
   frame_id: 'map'
 pose:
-  position: 
-    x: 2.71538352409
-    y: -1.11297699804
+  position:
+    x: 2.9250498135
+    y: -0.778618743701
     z: 0.0
-  orientation: 
+  orientation:
     x: 0.0
     y: 0.0
-    z: 0.663636796142
-    w: 0.748054946382
+    z: 0.636887998686
+    w: 0.770956339315
