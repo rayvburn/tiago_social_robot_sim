@@ -210,6 +210,7 @@ run_benchmark_experiment() {
 #   $9 number of trials
 run_benchmark_experiment_multiple() {
     local iterations=$9
+    local i
     for ((i = 1; i <= iterations; i++)); do
         echo "Starting benchmark experiment, trial $i"
         run_benchmark_experiment $1 $2 $3 $4 $5 $6 $7 $8
