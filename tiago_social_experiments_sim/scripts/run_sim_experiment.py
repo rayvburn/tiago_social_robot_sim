@@ -19,8 +19,8 @@ def mbCallback(data):
     nav_rejected = navigation_state == GoalStatus.REJECTED
 
     if nav_succeeded or nav_aborted or nav_rejected:
-        rospy.loginfo(rospy.get_caller_id() + " Shutting down the 'run_sim_experiment' script! move_base status: %s", data.status.status)
-        rospy.signal_shutdown("Shutting down due to reaching the goal pose")
+        rospy.loginfo(rospy.get_caller_id() + " Shutting down the 'run_sim_experiment' script! move_base status %s: [succeeded %d, aborted %d, rejected %d]" % (data.status.status, nav_succeeded, nav_aborted, nav_rejected))
+        rospy.signal_shutdown("Shutting down due to move_base status")
 
 
 def signal_handler(sig, frame):
