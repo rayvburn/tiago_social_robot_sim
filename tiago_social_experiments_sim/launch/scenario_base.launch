@@ -35,6 +35,7 @@
     <arg name="narrow_laser_range" default="true"/>
 
     <!-- Run debugging tools -->
+    <arg name="run_sim_gui" default="true"/>
     <arg name="run_perception_viz" default="false"/>
     <arg name="run_nav_viz" default="false"/>
     <arg name="run_reconfigure" default="false"/>
@@ -73,6 +74,7 @@
             <arg name="tf_world_map" value="$(arg tf_world_map)"/>
             <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="gui" value="$(arg run_sim_gui)"/>
         </include>
         <!--
             NOTE: ROS interfaces for each actor must be launched for specific scenarios.
@@ -85,7 +87,7 @@
             <arg name="world_name" value="$(arg world_file_wo_people)"/>
             <arg name="paused" value="false"/>
             <arg name="use_sim_time" value="true"/>
-            <arg name="gui" value="true"/>
+            <arg name="gui" value="$(arg run_sim_gui)"/>
             <arg name="headless" value="false"/>
             <arg name="debug" value="false"/>
             <arg name="verbose" value="true"/>

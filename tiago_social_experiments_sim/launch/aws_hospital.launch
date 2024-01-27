@@ -22,6 +22,7 @@
     <arg name="nav_state" default="localization"/>
 
     <!-- Run debugging tools -->
+    <arg name="run_sim_gui" default="true"/>
     <arg name="run_perception_viz" default="false"/>
     <arg name="run_nav_viz" default="true"/>
     <arg name="run_reconfigure" default="false"/>
@@ -55,6 +56,7 @@
         <arg name="local_planner" value="$(arg local_planner)"/>
         <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>
         <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="run_sim_gui" value="$(arg run_sim_gui)"/>
         <arg name="run_perception_viz" value="$(arg run_perception_viz)"/>
         <arg name="run_nav_viz" value="$(arg run_nav_viz)"/>
         <arg name="run_reconfigure" value="$(arg run_reconfigure)"/>
