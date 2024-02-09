@@ -102,7 +102,7 @@ repositories:
     version: e3840d6bca3d874db821d4e19797754c7a062d59
   tiago_software/pmb2_robot:
     type: git
-    url: git@github.com:rayvburn/pmb2_robot.git
+    url: https://github.com/rayvburn/pmb2_robot.git
     version: 504a0003d66cdc8ac647c92dd51170b5dd333720
   tiago_software/pmb2_simulation:
     type: git
