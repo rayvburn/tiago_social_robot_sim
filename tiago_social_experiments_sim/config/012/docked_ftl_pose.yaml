@@ -1,0 +1,16 @@
+# pose of the robot while docked and charging;
+# valid for a docking station located as in "follow the line board", a.k.a. "v3" world version
+header:
+  seq: 0,
+  stamp: now
+  frame_id: 'map'
+pose:
+  position:
+    x: 2.873
+    y: 6.061
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.9985263165477539
+    w: 0.05426965230747917

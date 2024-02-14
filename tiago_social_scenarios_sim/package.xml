@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tiago_social_scenarios_sim</name>
+  <version>0.0.0</version>
+  <description>The tiago_social_scenarios_sim package</description>
+  <author email="chromedivizer@gmail.com">Jarosław Karwowski</author>
+  <maintainer email="chromedivizer@gmail.com">Jarosław Karwowski</maintainer>
+  <license>BSD-3</license>
+  <url type="website">https://github.com/rayvburn/tiago_social_robot_sim</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>hubero_ros</build_depend>
+  <build_export_depend>hubero_ros</build_export_depend>
+  <exec_depend>hubero_ros</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>

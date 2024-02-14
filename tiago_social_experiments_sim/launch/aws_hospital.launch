@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- === ARGUMENTS ========================================================================== -->
+    <!-- (normal|wall_avoidance|crowd_avoidance) -->
+    <arg name="scenario" default="normal"/>
+
+    <arg name="people_sim" default="true"/>
+    <arg name="people_lite" default="false"/>
+    <arg name="people_sim_viz" default="false"/>
+
+    <!-- (titanium|steel|iron) -->
+    <arg name="robot_type" default="iron"/>
+
+    <arg name="perception_launch" default="true"/>
+
+    <arg name="navigation_launch" default="true"/>
+    <arg name="navigation_benchmark" default="true"/>
+
+    <arg name="global_planner" default="navfn"/>
+    <arg name="local_planner" default="humap"/>
+    <arg name="costmap_contexts" default="social"/>
+    <arg name="nav_state" default="localization"/>
+
+    <!-- Run debugging tools -->
+    <arg name="run_perception_viz" default="false"/>
+    <arg name="run_nav_viz" default="true"/>
+    <arg name="run_reconfigure" default="false"/>
+    <arg name="run_plot" default="true"/>
+
+    <!-- Automatic publishing of navigation goal -->
+    <arg name="publish_goal" default="true"/>
+
+    <arg name="shared_map" default="true"/>
+    <arg name="tf_world_map" value="-3.169 +2.337 +0.000 +3.1415 +0.000 +0.000"/>
+
+    <arg name="map_file" value="$(find aws_robomaker_hospital_world)/maps/aws_hospital_slam.yaml"/>
+    <arg name="allow_clearing_map_obstacles" default="false"/>
+    <arg name="map_frame" default="map"/>
+    <arg name="map_bounds" value="[-13.82, +7.65, -13.08, +36.31]"/>
+
+    <!-- resources for the hospital world -->
+    <env name="GAZEBO_MODEL_PATH" value="$(find aws_robomaker_hospital_world)/models:$(find aws_robomaker_hospital_world)/fuel_models:$(optenv GAZEBO_MODEL_PATH)"/>
+
+    <!-- === NODES ============================================================================== -->
+    <include file="$(find tiago_social_experiments_sim)/launch/scenario_base.launch">
+        <arg name="people_sim" value="$(arg people_sim)"/>
+        <arg name="people_sim_viz" value="$(arg people_sim_viz)"/>
+
+        <arg name="robot_type" value="$(arg robot_type)"/>
+
+        <arg name="perception_launch" value="$(arg perception_launch)"/>
+        <arg name="navigation_launch" value="$(arg navigation_launch)"/>
+        <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
+        <arg name="global_planner" value="$(arg global_planner)"/>
+        <arg name="local_planner" value="$(arg local_planner)"/>
+        <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>
+        <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="run_perception_viz" value="$(arg run_perception_viz)"/>
+        <arg name="run_nav_viz" value="$(arg run_nav_viz)"/>
+        <arg name="run_reconfigure" value="$(arg run_reconfigure)"/>
+        <arg name="run_plot" value="$(arg run_plot)"/>
+        <arg name="publish_goal" value="$(arg publish_goal)"/>
+        <!-- `hospital` world loads longer than simpler ones, goal delay must be prolonged -->
+        <arg name="publish_goal_delay" value="$(eval {'titanium': '60', 'steel': '60', 'iron': '25'}.get(arg('robot_type'), '25'))"/>
+
+        <!-- Selecting the Gazebo world file to use -->
+        <arg name="world_file_wo_people" value="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
+        <!-- Scenario-specific -->
+        <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite == true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'normal' and people_lite != true)" default="$(find aws_robomaker_hospital_world)/worlds/hospital_crowded.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'wall_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'crowd_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_reception_crowd.world"/>
+
+        <arg name="pose_sim" if="$(eval scenario == 'normal')" value="-x -3.2 -y 2.3 -z -0.003 -R 0.0 -P 0.0 -Y -3.1415"/>
+        <arg name="pose_sim" if="$(eval scenario == 'wall_avoidance')" value="-x -5.9 -y -6.55 -z -0.003 -R 0.0 -P 0.0 -Y -1.57"/>
+        <arg name="pose_sim" if="$(eval scenario == 'crowd_avoidance')" value="-x -3.6 -y 4.3 -z -0.003 -R 0.0 -P 0.0 -Y 1.54"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/normal/start_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/wall_avoidance/start_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowd_avoidance/start_amcl.yaml"/>
+
+        <arg name="shared_map" value="$(arg shared_map)"/>
+        <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+
+        <arg name="map_file" value="$(arg map_file)"/>
+        <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
+        <arg name="map_frame" value="$(arg map_frame)"/>
+        <!-- Set `external_map` to false for scenarios in which HuBeRo actors are not spawned -->
+
+        <arg name="goal_file" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/normal/finish_pose.yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/wall_avoidance/finish_pose.yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowd_avoidance/finish_pose.yaml"/>
+    </include>
+
+    <!--
+        Launch HuBeRo actors ROS interfaces only in 'full' version of simulation is selected.
+        Note that it will significantly affect simulation performance. Instead, `lite` mode is targeted
+        for faster prototyping
+    -->
+    <group if="$(eval scenario == 'normal' and people_sim == true and people_lite == false)">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
+            <arg name="actor_name" value="actor1"/>
+            <arg name="pose_x" value="-7.6"/>
+            <arg name="pose_y" value="-7.95"/>
+            <arg name="pose_yaw" value="0.82"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/spawn_actor.launch">
+            <arg name="actor_name" value="actor2"/>
+            <arg name="pose_x" value="-7.50"/>
+            <arg name="pose_y" value="-22.95"/>
+            <arg name="pose_yaw" value="1.78"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="map_bounds" value="$(arg map_bounds)"/>
+        </include>
+        <!-- scenario node - orchestrates actors movements -->
+        <node pkg="tiago_social_scenarios_sim" type="aws_hospital_normal_hubero" name="aws_hospital_normal_hubero" output="screen" args="1"/>
+    </group>
+</launch>

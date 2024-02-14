@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- based on `tiago_simulation/tiago_2dnav_gazebo/launch/tiago_navigation.launch` -->
+<launch>
+	<!-- *** ARGUMENTS -->
+	<arg name="namespace" default="/"/>
+	<arg name="public_sim" default="true"/>
+
+	<arg name="robot"  default="titanium"/>
+	<arg name="arm"  default="$(eval {'iron': False}.get(arg('robot'), True))"/>
+	<arg name="end_effector"  default="$(eval {'iron': 'false', 'steel': 'pal-gripper', 'titanium': 'pal-hey5'}.get(arg('robot'), 'pal-gripper'))"/>
+	<arg name="ft_sensor"  default="$(eval {'titanium': 'schunk-ft'}.get(arg('robot'), 'false'))"/>
+	<arg name="laser_model"  default="sick-571"/>
+	<arg name="camera_model"  default="orbbec-astra"/>
+	<arg name="tuck_arm"  default="true"/>
+
+	<arg name="lost"   default="false"/>
+    <arg name="world"  default="small_office"/>
+	<!-- initial_pose_a: -0.000729, initial_pose_x: -0.000033, initial_pose_y: 0.000132} -->
+	<arg name="gzpose" default="-x 0.0  -y   0.0 -z  0.0   -R 0.0 -P 0.0 -Y  0.0" unless="$(arg lost)"/>
+	<arg name="gzpose" default="-x 0.78 -y -11.1 -z -0.003 -R 0.0 -P 0.0 -Y 70.0" if="$(arg lost)"/>
+
+	<arg name="rviz"     default="true"/>
+	<arg name="gzclient" default="true"/>
+	<arg name="recording" default="false"/>
+	<arg name="extra_gazebo_args" default=""/>
+
+	<!-- NOTE: related to rviz configuration -->
+	<arg name="sim_sufix" value="_public_sim"     if="$(arg public_sim)"/>
+	<arg name="sim_sufix" value=""                unless="$(arg public_sim)"/>
+
+	<!-- *** NODES -->
+	<node name="update_maps_link" pkg="pal_navigation_sm" type="base_maps_symlink.sh" args="tiago_maps"/>
+
+	<group ns="$(arg namespace)">
+		<include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
+			<arg name="world"      value="$(arg world)"/>
+			<arg name="arm" value="$(arg arm)"/>
+			<arg name="end_effector" value="$(arg end_effector)"/>
+			<arg name="ft_sensor" value="$(arg ft_sensor)"/>
+			<arg name="laser_model" value="$(arg laser_model)"/>
+			<arg name="camera_model" value="$(arg camera_model)"/>
+			<arg name="gzpose"     value="$(arg gzpose)"/>
+			<arg name="tuck_arm"   value="$(arg tuck_arm)"/>
+			<arg name="gui"        value="$(arg gzclient)"/>
+			<arg name="public_sim" value="$(arg public_sim)"/>
+			<arg name="recording"  value="$(arg recording)"/>
+			<arg name="extra_gazebo_args" value="$(arg extra_gazebo_args)"/>
+
+			<!-- <arg if="$(eval local_planner == 'teb')" name="use_dynamic_footprint" value="true"/> -->
+			<arg name="use_dynamic_footprint" value="false"/>
+		</include>
+		<!-- <node name="rviz" pkg="rviz" type="rviz" if="$(arg rviz)" args="-d $(find tiago_2dnav)/config/rviz/navigation$(arg sim_sufix).rviz"/> -->
+		<node name="rviz" pkg="rviz" type="rviz" if="$(arg rviz)" args="-d $(find tiago_social_navigation)/rviz/tiago_navigation.rviz"/>
+	</group>
+</launch>

@@ -1,0 +1,14 @@
+header:
+  seq: 0
+  stamp: now
+  frame_id: "map"
+pose:
+  position:
+    x: 2.945
+    y: 8.837
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.6997161
+    w: 0.714421

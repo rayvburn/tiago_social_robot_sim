@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <!-- === ARGUMENTS ========================================================================== -->
+    <arg name="people_sim" default="false"/>
+    <arg name="people_sim_viz" default="false"/>
+
+    <!-- (titanium|steel|iron) -->
+    <arg name="robot_type" default="titanium"/>
+
+    <arg name="perception_launch" default="false"/>
+    <!--
+        NOTE:
+            '/spencer/perception/tracked_persons'
+        topic provides more tracks (e.g., swivel chairs too), whereas
+            '/spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body'
+        topic provides more confident tracks but less of them.
+        There is also:
+            '/spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body_or_moving'
+    -->
+    <arg name="perception_input_topic" default="/spencer/perception/tracked_persons_confirmed_by_HOG_or_upper_body"/>
+
+    <!-- Set to true if navigation modules should be launched -->
+    <arg name="navigation_launch" default="true"/>
+    <!-- It is assumed that in the simulation, modules simulating humans provide a map by default (configurable) -->
+    <arg name="external_map" default="$(arg people_sim)"/>
+
+    <!-- Set to true if navigation benchmark should be enabled -->
+    <arg name="navigation_benchmark" default="false"/>
+
+    <arg name="global_planner" default="navfn"/>
+    <arg name="local_planner" default="teb"/>
+    <arg name="costmap_contexts" default="social"/>
+    <arg name="nav_state" default="localization"/>
+
+    <arg name="narrow_laser_range" default="true"/>
+
+    <!-- Run debugging tools -->
+    <arg name="run_perception_viz" default="false"/>
+    <arg name="run_nav_viz" default="false"/>
+    <arg name="run_reconfigure" default="false"/>
+    <arg name="run_plot" default="false"/>
+
+    <!-- Automatic publishing of navigation goal -->
+    <arg name="publish_goal" default="false"/>
+    <arg name="publish_goal_delay" default="$(eval {'titanium': '50', 'steel': '50', 'iron': '15'}.get(arg('robot_type'), '15'))"/>
+    <arg name="goal_file" default="provide_a_valid_yaml_with_sim_PoseStamped"/>
+
+    <!--
+        Related to HuBeRo bringup - set to true if HuBeRo actors static map should be shared with robot.
+        Should be set to false if HuBeRo framework is not used (has effect only if `people_sim` is true)
+    -->
+    <arg name="shared_map" default="true"/>
+
+    <!-- Transform world poses to map:    x     y     z   yaw   pitch  roll -->
+    <arg name="tf_world_map" default="-1.88 -3.55 +0.00 -0.1622 +0.00 +0.00"/>
+
+    <arg name="pose_sim" default="-x 0.2 -y -1.63 -z -0.003 -R 0.0 -P 0.0 -Y -1.5708"/>
+    <arg name="map_frame" default="map"/>
+
+    <arg name="world_file_wo_people" default="$(find gazebo_ros)/worlds/empty.world"/>
+    <arg name="world_file_people" default="$(find gazebo_ros)/worlds/empty.world"/>
+    <arg name="map_file" default="provide_a_valid_YAML_with_sim_map_metadata"/>
+    <arg name="allow_clearing_map_obstacles" default="true"/>
+    <arg name="localization_pose_estimate" default="provide_a_valid_YAML_with_initial_sim_pose_for_AMCL"/>
+
+    <!-- === NODES ============================================================================== -->
+    <group if="$(arg people_sim)">
+        <include file="$(find hubero_bringup_gazebo_ros)/launch/example.launch">
+            <arg name="world" value="custom"/> <!-- ignores pre-defined bringup config -->
+            <arg name="world_file" value="$(arg world_file_people)"/>
+            <arg name="map_file" value="$(arg map_file)"/>
+            <arg name="rviz" value="$(arg people_sim_viz)"/>
+            <arg name="tf_world_map" value="$(arg tf_world_map)"/>
+            <arg name="shared_map" value="$(arg shared_map)"/>
+            <arg name="map_frame" value="$(arg map_frame)"/>
+        </include>
+        <!--
+            NOTE: ROS interfaces for each actor must be launched for specific scenarios.
+            Also, one should not use `people_sim:=true` without at least specyfing static TF.
+            Otherwise robot will quickly start flickering.
+        -->
+    </group>
+    <group unless="$(arg people_sim)">
+        <include file="$(find gazebo_ros)/launch/empty_world.launch">
+            <arg name="world_name" value="$(arg world_file_wo_people)"/>
+            <arg name="paused" value="false"/>
+            <arg name="use_sim_time" value="true"/>
+            <arg name="gui" value="true"/>
+            <arg name="headless" value="false"/>
+            <arg name="debug" value="false"/>
+            <arg name="verbose" value="true"/>
+        </include>
+    </group>
+
+    <include file="$(find tiago_social_bringup_sim)/launch/gazebo_spawn.launch">
+        <arg name="gzpose" value="$(arg pose_sim)"/>
+        <arg name="robot" value="$(arg robot_type)"/>
+    </include>
+
+    <include file="$(find tiago_social_bringup)/launch/nav_perception_bringup.launch">
+        <arg name="nav_state" value="$(arg nav_state)"/>
+        <arg name="narrow_laser_range" value="$(arg narrow_laser_range)"/>
+        <arg name="navigation_launch" value="$(arg navigation_launch)"/>
+        <arg name="external_map" value="$(arg external_map)"/>
+        <arg name="map_file" value="$(arg map_file)"/>
+        <arg name="allow_clearing_map_obstacles" value="$(arg allow_clearing_map_obstacles)"/>
+        <arg name="global_planner" value="$(arg global_planner)"/>
+        <arg name="local_planner" value="$(arg local_planner)"/>
+        <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>
+        <arg name="localization_pose_estimate" value="$(arg localization_pose_estimate)"/>
+        <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
+        <arg name="perception_launch" value="$(arg perception_launch)"/>
+        <arg name="perception_input_topic" value="$(arg perception_input_topic)"/>
+        <arg name="publish_goal" value="$(arg publish_goal)"/>
+        <arg name="publish_goal_delay" value="$(arg publish_goal_delay)"/>
+        <arg name="goal_file" value="$(arg goal_file)"/>
+        <!-- debugging tools -->
+        <arg name="run_perception_viz" value="$(arg run_perception_viz)"/>
+        <arg name="run_nav_viz" value="$(arg run_nav_viz)"/>
+        <arg name="run_reconfigure" value="$(arg run_reconfigure)"/>
+        <arg name="run_plot" value="$(arg run_plot)"/>
+    </include>
+</launch>

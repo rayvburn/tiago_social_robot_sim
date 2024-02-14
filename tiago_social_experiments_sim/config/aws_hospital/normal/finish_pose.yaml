@@ -1,0 +1,15 @@
+# Near the doctor and the lying patient in the second room
+header:
+  seq: 0
+  stamp: now
+  frame_id: "map"
+pose:
+  position:
+    x: 7.1353521347
+    y: 13.7780361176
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.874869226644
+    w: 0.4843592017

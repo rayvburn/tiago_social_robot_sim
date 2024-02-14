@@ -1,0 +1,15 @@
+# goal is near the FTL board
+header:
+  seq: 0,
+  stamp: now
+  frame_id: 'map'
+pose:
+  position:
+    x: 0.168240
+    y: -5.058021
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: -0.8224999210905467
+    w: 0.5687652238015651
