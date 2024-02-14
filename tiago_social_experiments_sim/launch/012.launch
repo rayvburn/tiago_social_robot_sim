@@ -342,4 +342,17 @@
             <arg name="map_bounds" value="$(arg map_bounds)"/>
         </include>
     </group>
+
+    <group if="$(eval scenario == 'overtaking' or scenario == 'passing_in_front')">
+        <node if="$(eval local_planner == 'humap')" name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam"
+            args="set_from_parameters /move_base/HumapPlannerROS" output="screen" respawn="false"
+        >
+            <!--
+                Assure that the threshold for path crossing detection is pretty high (but not fully disabled).
+                This is due to the SPENCER perception (used during experiments, sometimes poorly working) issues that
+                lead to unnecessarily yielding a way to a human once it was already passed (bad extrapolation)
+            -->
+            <param name="path_crossing_confidence_threshold" value="0.9"/>
+        </node>
+    </group>
 </launch>
