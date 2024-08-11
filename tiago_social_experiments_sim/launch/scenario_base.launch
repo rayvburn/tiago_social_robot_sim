@@ -7,6 +7,7 @@
     <!-- (titanium|steel|iron) -->
     <arg name="robot_type" default="titanium"/>
 
+    <!-- (false|spencer|ground_truth_hubero) -->
     <arg name="perception_launch" default="false"/>
     <!--
         NOTE:

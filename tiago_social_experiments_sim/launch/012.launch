@@ -10,7 +10,7 @@
     <!-- (titanium|steel|iron) -->
     <arg name="robot_type" default="iron"/>
 
-    <arg name="perception_launch" default="true"/>
+    <arg name="perception_launch" default="spencer"/>
 
     <arg name="navigation_launch" default="true"/>
     <arg name="navigation_benchmark" default="true"/>

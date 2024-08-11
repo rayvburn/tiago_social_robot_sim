@@ -83,7 +83,7 @@ if __name__ == '__main__':
         'costmap_contexts:=' + str(costmap_contexts),
         'scenario:=' + str(scenario),
         'navigation_benchmark:=true',
-        'perception_launch:=true',
+        'perception_launch:=spencer',
         'publish_goal:=true',
         'run_reconfigure:=false'
     ]
