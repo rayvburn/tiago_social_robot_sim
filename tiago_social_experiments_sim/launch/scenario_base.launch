@@ -7,8 +7,9 @@
     <!-- (titanium|steel|iron) -->
     <arg name="robot_type" default="titanium"/>
 
-    <!-- (false|spencer|ground_truth_hubero) -->
+    <!-- (false|spencer|ground_truth) -->
     <arg name="perception_launch" default="false"/>
+    <arg name="perception_config" default=""/>
     <!--
         NOTE:
             '/spencer/perception/tracked_persons'
@@ -113,6 +114,7 @@
         <arg name="localization_pose_estimate" value="$(arg localization_pose_estimate)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="perception_launch" value="$(arg perception_launch)"/>
+        <arg name="perception_config" value="$(arg perception_config)"/>
         <arg name="perception_input_topic" value="$(arg perception_input_topic)"/>
         <arg name="publish_goal" value="$(arg publish_goal)"/>
         <arg name="publish_goal_delay" value="$(arg publish_goal_delay)"/>
