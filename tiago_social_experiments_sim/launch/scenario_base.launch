@@ -43,6 +43,11 @@
     <arg name="run_reconfigure" default="false"/>
     <arg name="run_plot" default="false"/>
 
+    <!-- Simulator-specific parameters -->
+    <arg name="gazebo_extra_args" default=""/>
+    <arg name="gazebo_recording" default="false"/>
+    <arg name="gazebo_start_paused" default="false"/>
+
     <!-- Automatic publishing of navigation goal -->
     <arg name="publish_goal" default="false"/>
     <arg name="publish_goal_delay" default="$(eval {'titanium': '50', 'steel': '50', 'iron': '15'}.get(arg('robot_type'), '15'))"/>
@@ -77,6 +82,9 @@
             <arg name="shared_map" value="$(arg shared_map)"/>
             <arg name="map_frame" value="$(arg map_frame)"/>
             <arg name="gui" value="$(arg run_sim_gui)"/>
+            <arg name="extra_gazebo_args" value="$(arg gazebo_extra_args)"/>
+            <arg name="recording" value="$(arg gazebo_recording)"/>
+            <arg name="paused" value="$(arg gazebo_start_paused)"/>
         </include>
         <!--
             NOTE: ROS interfaces for each actor must be launched for specific scenarios.
@@ -87,7 +95,9 @@
     <group unless="$(arg people_sim)">
         <include file="$(find gazebo_ros)/launch/empty_world.launch">
             <arg name="world_name" value="$(arg world_file_wo_people)"/>
-            <arg name="paused" value="false"/>
+            <arg name="extra_gazebo_args" value="$(arg gazebo_extra_args)"/>
+            <arg name="recording" value="$(arg gazebo_recording)"/>
+            <arg name="paused" value="$(arg gazebo_start_paused)"/>
             <arg name="use_sim_time" value="true"/>
             <arg name="gui" value="$(arg run_sim_gui)"/>
             <arg name="headless" value="false"/>

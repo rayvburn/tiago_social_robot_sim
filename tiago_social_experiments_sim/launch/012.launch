@@ -27,6 +27,11 @@
     <arg name="run_reconfigure" default="false"/>
     <arg name="run_plot" default="true"/>
 
+    <!-- Simulator-specific parameters -->
+    <arg name="gazebo_extra_args" default=""/>
+    <arg name="gazebo_recording" default="false"/>
+    <arg name="gazebo_start_paused" default="false"/>
+
     <!-- Automatic publishing of navigation goal -->
     <arg name="publish_goal" default="true"/>
 
@@ -87,6 +92,9 @@
         <arg name="run_nav_viz" value="$(arg run_nav_viz)"/>
         <arg name="run_reconfigure" value="$(arg run_reconfigure)"/>
         <arg name="run_plot" value="$(arg run_plot)"/>
+        <arg name="gazebo_extra_args" value="$(arg gazebo_extra_args)"/>
+        <arg name="gazebo_recording" value="$(arg gazebo_recording)"/>
+        <arg name="gazebo_start_paused" value="$(arg gazebo_start_paused)"/>
         <arg name="publish_goal" value="$(arg publish_goal)"/>
         <arg name="publish_goal_delay" if="$(eval scenario == 'dynamic')" value="$(eval {'titanium': '110', 'steel': '110', 'iron': '70'}.get(arg('robot_type'), '70'))"/>
         <!-- Increased the delay as the srl_eband trajectory planner could not process the request when it is sent earlier -->
