@@ -35,3 +35,19 @@ Following configurations were tested:
   ```sh
   ./run_aws_hospital_survey.sh SCENARIO=survey_individual LOCAL_PLANNER=humap COSTMAP_CONTEXTS=social_extended
   ```
+
+### Groups
+
+Test configurations:
+
+* first:
+
+  ```sh
+  ./run_aws_hospital_survey.sh SCENARIO=survey_group LOCAL_PLANNER=teb COSTMAP_CONTEXTS=traditional
+  ```
+
+* second:
+
+  ```sh
+  ./run_aws_hospital_survey.sh SCENARIO=survey_group LOCAL_PLANNER=teb COSTMAP_CONTEXTS=social_extended
+  ```

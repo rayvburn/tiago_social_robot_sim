@@ -36,10 +36,9 @@ echo "TRIAL_NAME        $TRIAL_NAME"
 echo "TARGET_DIR        $TARGET_DIR"
 
 # Check the value of the variable using if-elif-else
-if [[ "${SCENARIO}" == "survey_individual" ]]; then
-    export "PUBLISH_GOAL_DELAY"="120"
-elif [[ "${SCENARIO}" == "survey_group" ]]; then
-    export "PUBLISH_GOAL_DELAY"="25"
+if [[ "${SCENARIO}" == "survey_individual" || "${SCENARIO}" == "survey_group" ]]; then
+    # differentiating delays between the scenarios is no longer necessary
+    export "PUBLISH_GOAL_DELAY"="50"
 else
     echo "Scenario type not recognized."
     exit 0
