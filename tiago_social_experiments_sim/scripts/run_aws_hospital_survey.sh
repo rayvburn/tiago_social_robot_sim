@@ -120,6 +120,8 @@ for dir in "${output_dir}"/*/; do
                 -r 60 \
                 -pattern_type glob -i "${dir_path}/*.jpg" \
                 -c:v libx264 \
+                -b 3000k \
+                -qscale 0 \
                 -y \
                 ${output_dir}/${dirname}.mp4
         else
