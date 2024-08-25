@@ -72,8 +72,9 @@
         <arg name="gazebo_extra_args" value="$(arg gazebo_extra_args)"/>
         <arg name="gazebo_recording" value="$(arg gazebo_recording)"/>
         <arg name="gazebo_start_paused" value="$(arg gazebo_start_paused)"/>
-        <arg name="publish_goal" value="$(arg publish_goal)"/>
-        <!-- `hospital` world loads longer than simpler ones, goal delay must be prolonged -->
+        <!-- In the 'survey_individual' scenario, robot goal is published with an external script -->
+        <arg name="publish_goal" if="$(eval scenario == 'survey_individual')" value="false"/>
+        <arg name="publish_goal" unless="$(eval scenario == 'survey_individual')" value="$(arg publish_goal)"/>
         <arg name="publish_goal_delay" value="$(arg publish_goal_delay)"/>
 
         <!-- Selecting the Gazebo world file to use -->
@@ -109,7 +110,7 @@
         <arg name="goal_file" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/normal/finish_pose.yaml"/>
         <arg name="goal_file" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/wall_avoidance/finish_pose.yaml"/>
         <arg name="goal_file" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowd_avoidance/finish_pose.yaml"/>
-        <arg name="goal_file" if="$(eval scenario == 'survey_individual')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_individual/finish_pose.yaml"/>
+        <!-- in the 'survey_individual' scenario, the goal is published differently (see below) -->
         <arg name="goal_file" if="$(eval scenario == 'survey_group')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_group/finish_pose.yaml"/>
     </include>
 
@@ -155,5 +156,17 @@
         <node type="trajectory_spawner.sh" pkg="hubero_bringup_gazebo_ros" name="$(arg actor_name)_traj_spawner" ns="$(arg actor_name)" output="screen"
             args="$(arg actor_name) $(find tiago_social_experiments_sim)/config/aws_hospital/survey_individual/$(arg actor_name).urdf"
         />
+        <!-- Publish navigation goal for the robot using an external script -->
+        <node type="publish_goal_at_distance.py" pkg="tiago_social_experiments_sim" name="distance_based_robot_goal_publisher" output="screen"
+            args="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_individual/finish_pose.yaml"
+            if="$(arg publish_goal)">
+            <!-- node parameters -->
+            <param name="target_human_name" value="0"/>
+            <param name="distance_threshold" value="10.57"/>
+            <!-- exposing topic remappings here -->
+            <remap from="/odom" to="/move_base_controller/odom"/>
+            <remap from="/people" to="/people"/>
+            <remap from="/move_base_simple/goal" to="/move_base_simple/goal"/>
+        </node>
     </group>
 </launch>

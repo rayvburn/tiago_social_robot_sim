@@ -61,12 +61,6 @@ echo "Output resources will be saved in '${output_dir}'"
 # * 'lockstep'
 #   * Lockstep parameter is crucial to collect camera images with the desired update rate, see
 #   * http://classic.gazebosim.org/tutorials?tut=lockstep_physics_sensors&cat=sensors
-# * 'publish_goal_delay'
-#   * delay is expressed in system time, hence, due to the presence of 'lockstep" parameter and corresponding
-#   * overall slowdown of the simulation, it must be adjusted to synchronize the actor movement (expressed in
-#   * simulation time);
-#   * in the "survey_individual", the robot should receive the goal when the actor is somewhere at (-4.70, -6.35) -
-#   * simply read the "Real Time" value then and set 'publish_goal_delay' to that
 # * 'timeout --foreground 260 <roslaunch ...>'
 #   * this would be handy but terminates the whole script from further execution
 #
