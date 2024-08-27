@@ -81,6 +81,7 @@
         <arg name="robot_type" value="$(arg robot_type)"/>
 
         <arg name="perception_launch" value="$(arg perception_launch)"/>
+        <arg name="perception_config" value="$(find tiago_social_experiments_sim)/config/012/people_perception_ground_truth_common.yaml"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
