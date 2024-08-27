@@ -56,7 +56,7 @@
         <arg name="robot_type" value="$(arg robot_type)"/>
 
         <arg name="perception_launch" value="$(arg perception_launch)"/>
-        <arg name="perception_config" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/people_perception_ground_truth_common.yaml"/>
+        <arg name="perception_config" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/normal/people_perception_ground_truth.yaml"/>
         <arg name="perception_config" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/people_perception_ground_truth_common.yaml"/>
         <arg name="perception_config" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/people_perception_ground_truth_common.yaml"/>
         <arg name="perception_config" if="$(eval scenario == 'survey_individual')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_individual/people_perception_ground_truth.yaml"/>

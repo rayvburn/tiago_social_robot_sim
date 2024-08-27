@@ -1,0 +1,55 @@
+model_name_patterns: [
+  "actor",
+]
+
+link_name_patterns: [
+  "Scrubs",
+  "PatientWheelChair",
+  "MaleVisitorSit",
+  "VisitorKidSit",
+  "FemaleVisitorSit",
+  "Crowd1_Scrubs",
+  "Crowd1_Male",
+  "Crowd2_Scrubs",
+  "Crowd2_Male",
+  "Crowd3_Male",
+]
+
+# Additional transforms to be applied for some specific models
+transforms:
+  # the key here must match the "name patterns" above
+  actor: [
+    # transform is applied to elements one by one; offsets are expressed in global coordinates;
+    # the order of elements is: x, y, z, roll, pitch, yaw
+    +0.00,
+    +0.00,
+    -1.03,
+    -1.5708,
+    +0.0,
+    -1.5708
+  ]
+  Crowd1_Male: [+0.0, +0.0, +0.0, +0.0, +0.0, -1.5708]
+  Crowd2_Male: [+0.0, +0.0, +0.0, +0.0, +0.0, -1.5708]
+  Crowd3_Male: [+0.0, +0.0, +0.0, +0.0, +0.0, -1.5708]
+
+groups:
+  # define names of groups so they can be read as separate ROS parameters (whole dicts cannot be passed as ROS params)
+  names: [
+    "GroupCorridor",
+    "GroupOperatingRoomWScrubs",
+    "GroupOperatingRoomHumans",
+    "GroupSitting"
+  ]
+  # specify names of entities (values) involved in each group (keys)
+  GroupCorridor: [
+    "Crowd1"
+  ]
+  GroupOperatingRoomWScrubs: [
+    "Crowd2"
+  ]
+  GroupOperatingRoomHumans: [
+    "Crowd3",
+  ]
+  GroupSitting: [
+    "Crowd4"
+  ]
