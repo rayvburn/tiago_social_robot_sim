@@ -28,6 +28,7 @@
 
     <!-- Set to true if navigation benchmark should be enabled -->
     <arg name="navigation_benchmark" default="false"/>
+    <arg name="navigation_benchmark_logs_dir" default="$(env HOME)"/>
 
     <arg name="global_planner" default="navfn"/>
     <arg name="local_planner" default="teb"/>
@@ -123,6 +124,7 @@
         <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>
         <arg name="localization_pose_estimate" value="$(arg localization_pose_estimate)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
+        <arg name="navigation_benchmark_logs_dir" value="$(arg navigation_benchmark_logs_dir)"/>
         <arg name="perception_launch" value="$(arg perception_launch)"/>
         <arg name="perception_config" value="$(arg perception_config)"/>
         <arg name="perception_input_topic" value="$(arg perception_input_topic)"/>

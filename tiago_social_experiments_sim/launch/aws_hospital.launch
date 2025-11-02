@@ -15,6 +15,7 @@
 
     <arg name="navigation_launch" default="true"/>
     <arg name="navigation_benchmark" default="true"/>
+    <arg name="navigation_benchmark_logs_dir" default="$(env HOME)"/>
 
     <arg name="global_planner" default="navfn"/>
     <arg name="local_planner" default="humap"/>
@@ -64,6 +65,7 @@
         <arg name="perception_config" if="$(eval scenario == 'crowded')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowded/people_perception_ground_truth.yaml"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
+        <arg name="navigation_benchmark_logs_dir" value="$(arg navigation_benchmark_logs_dir)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
         <arg name="local_planner" value="$(arg local_planner)"/>
         <arg name="costmap_contexts" value="$(arg costmap_contexts)"/>
