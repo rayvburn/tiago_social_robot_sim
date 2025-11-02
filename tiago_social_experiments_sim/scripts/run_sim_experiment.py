@@ -42,27 +42,31 @@ if __name__ == '__main__':
     global_planner = 'global_planner'
     costmap_contexts = 'social_extended'
     local_planner = 'teb'
+    benchmark_logs_dir = '~/srpb_logs'
     timeout = 50.0 # expressed as ROS Time
 
     if argsnum >= 2:
         timeout = float(sys.argv[1])
     if argsnum >= 3:
-        local_planner = str(sys.argv[2]).lstrip().rstrip()
+        benchmark_logs_dir = str(sys.argv[2]).lstrip().rstrip()
     if argsnum >= 4:
-        global_planner = str(sys.argv[3]).lstrip().rstrip()
+        local_planner = str(sys.argv[3]).lstrip().rstrip()
     if argsnum >= 5:
-        costmap_contexts = str(sys.argv[4]).lstrip().rstrip()
+        global_planner = str(sys.argv[4]).lstrip().rstrip()
     if argsnum >= 6:
-        scenario = str(sys.argv[5]).lstrip().rstrip()
+        costmap_contexts = str(sys.argv[5]).lstrip().rstrip()
     if argsnum >= 7:
-        launch_name = str(sys.argv[6]).lstrip().rstrip()
+        scenario = str(sys.argv[6]).lstrip().rstrip()
     if argsnum >= 8:
-        launch_rel_dir = str(sys.argv[7]).lstrip().rstrip()
+        launch_name = str(sys.argv[7]).lstrip().rstrip()
     if argsnum >= 9:
-        launch_pkg = str(sys.argv[8]).lstrip().rstrip()
+        launch_rel_dir = str(sys.argv[8]).lstrip().rstrip()
+    if argsnum >= 10:
+        launch_pkg = str(sys.argv[9]).lstrip().rstrip()
 
     print('Running the simulation experiment launcher with:')
     print('\t timeout:          ' + str(timeout))
+    print('\t SRPB logs dir:    ' + str(benchmark_logs_dir))
     print('\t local_planner:    ' + str(local_planner))
     print('\t global_planner:   ' + str(global_planner))
     print('\t costmap_contexts: ' + str(costmap_contexts))
@@ -83,6 +87,7 @@ if __name__ == '__main__':
         'costmap_contexts:=' + str(costmap_contexts),
         'scenario:=' + str(scenario),
         'navigation_benchmark:=true',
+        'navigation_benchmark_logs_dir:=' + str(benchmark_logs_dir),
         'perception_launch:=spencer',
         'publish_goal:=true',
         'run_reconfigure:=false'

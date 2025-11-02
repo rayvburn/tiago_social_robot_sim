@@ -53,11 +53,12 @@ get_experiment_type() {
 run_sim_experiment() {
     # Runs script that uses python roslaunch API to manage the execution
     timeout="$1" # ROS Time timeout
-    local_planner="$2"
-    global_planner="$3"
-    costmap_contexts="$4"
-    scenario="$5"
-    world="$6"
+    benchmark_logs_dir="$2"
+    local_planner="$3"
+    global_planner="$4"
+    costmap_contexts="$5"
+    scenario="$6"
+    world="$7"
 
     # 5.0, because on average, the real time factor is about 0.20;
     # plus 1 minute for the launch, 1 minute for shutdown,
@@ -66,6 +67,7 @@ run_sim_experiment() {
 
     echo "Running experiment with:"
     echo "  ROS time timeout: $timeout sec (system timeout is $systim_timeout sec),"
+    echo "  SRPB logs dir:    $benchmark_logs_dir"
     echo "  local planner:    $local_planner,"
     echo "  global planner:   $global_planner,"
     echo "  costmap contexts: $costmap_contexts,"
@@ -82,6 +84,7 @@ run_sim_experiment() {
     timeout $systim_timeout \
         python $SCRIPT_DIR/run_sim_experiment.py \
             $timeout \
+            $benchmark_logs_dir \
             $local_planner \
             $global_planner \
             $costmap_contexts \
@@ -148,13 +151,14 @@ run_benchmark_experiment() {
     costmap_contexts="$4"
     scenario="$5"
     world="$6"
-
-    # run the simulation experiment
-    run_sim_experiment $timeout $local_planner $global_planner $costmap_contexts $scenario $world
-
-    # when the experiment finishes - do stuff related to the SRPB logs
+    # SRPB logs locations
     local logs_source_dir=$7
     local logs_target_dir=$8
+
+    # run the simulation experiment
+    run_sim_experiment $timeout $logs_source_dir $local_planner $global_planner $costmap_contexts $scenario $world
+
+    # when the experiment finishes - do stuff related to the SRPB logs
     echo ""
     echo "Starting SRPB stuff with logs located at $logs_source_dir. Target logs directory is $logs_target_dir"
     echo ""
