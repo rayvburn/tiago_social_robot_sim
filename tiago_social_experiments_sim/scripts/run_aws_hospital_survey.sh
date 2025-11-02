@@ -56,6 +56,10 @@ done
 mkdir -p $output_dir
 echo "Output resources will be saved in '${output_dir}'"
 
+# ensure that the directory to store navigation benchmark logs exists
+readonly NAVIGATION_BENCHMARK_LOGS_DIR="${HOME}/srpb_logs_survey"
+mkdir -p ${NAVIGATION_BENCHMARK_LOGS_DIR}
+
 #
 # Parameters:
 # * 'lockstep'
@@ -71,6 +75,7 @@ roslaunch tiago_social_experiments_sim aws_hospital.launch \
     global_planner:=${GLOBAL_PLANNER} \
     costmap_contexts:=${COSTMAP_CONTEXTS} \
     navigation_benchmark:=true \
+    navigation_benchmark_logs_dir:=${NAVIGATION_BENCHMARK_LOGS_DIR} \
     perception_launch:=ground_truth \
     publish_goal:=true \
     publish_goal_delay:=${PUBLISH_GOAL_DELAY} \
@@ -80,7 +85,7 @@ roslaunch tiago_social_experiments_sim aws_hospital.launch \
     gazebo_recording:=true
 
 # Copy and process SRPB logs
-rosrun srpb_evaluation copy_logs.sh ${HOME}/srpb_logs_survey ${output_dir}
+rosrun srpb_evaluation copy_logs.sh ${NAVIGATION_BENCHMARK_LOGS_DIR} ${output_dir}
 rosrun srpb_evaluation evaluate_from_dir.sh ${output_dir}
 
 # Relocate newest Gazebo log
