@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <!-- === ARGUMENTS ========================================================================== -->
-    <!-- (normal|wall_avoidance|crowd_avoidance|survey_individual|survey_group) -->
+    <!-- (normal|wall_avoidance|crowd_avoidance|survey_individual|survey_group|crowded) -->
     <arg name="scenario" default="normal"/>
 
     <arg name="people_sim" default="true"/>
@@ -61,6 +61,7 @@
         <arg name="perception_config" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/people_perception_ground_truth_common.yaml"/>
         <arg name="perception_config" if="$(eval scenario == 'survey_individual')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_individual/people_perception_ground_truth.yaml"/>
         <arg name="perception_config" if="$(eval scenario == 'survey_group')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_group/people_perception_ground_truth.yaml"/>
+        <arg name="perception_config" if="$(eval scenario == 'crowded')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowded/people_perception_ground_truth.yaml"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
@@ -89,18 +90,21 @@
         <arg name="world_file_people" if="$(eval scenario == 'crowd_avoidance')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_reception_crowd.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'survey_individual')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_survey_individual.world"/>
         <arg name="world_file_people" if="$(eval scenario == 'survey_group')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_survey_group.world"/>
+        <arg name="world_file_people" if="$(eval scenario == 'crowded')" default="$(find aws_robomaker_hospital_world)/worlds/hospital_crowded_scenario.world"/>
 
         <arg name="pose_sim" if="$(eval scenario == 'normal')" value="-x -3.2 -y 2.3 -z -0.003 -R 0.0 -P 0.0 -Y -3.1415"/>
         <arg name="pose_sim" if="$(eval scenario == 'wall_avoidance')" value="-x -5.9 -y -6.55 -z -0.003 -R 0.0 -P 0.0 -Y -1.57"/>
         <arg name="pose_sim" if="$(eval scenario == 'crowd_avoidance')" value="-x -3.6 -y 4.3 -z -0.003 -R 0.0 -P 0.0 -Y 1.54"/>
         <arg name="pose_sim" if="$(eval scenario == 'survey_individual')" value="-x -5.6 -y +4.2 -z -0.003 -R 0.0 -P 0.0 -Y -1.5"/>
         <arg name="pose_sim" if="$(eval scenario == 'survey_group')" value="-x -3.6 -y 4.3 -z -0.003 -R 0.0 -P 0.0 -Y 1.54"/>
+        <arg name="pose_sim" if="$(eval scenario == 'crowded')" value="-x -3.6 -y 4.3 -z -0.003 -R 0.0 -P 0.0 -Y 1.54"/>
 
         <arg name="localization_pose_estimate" if="$(eval scenario == 'normal')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/normal/start_amcl.yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'wall_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/wall_avoidance/start_amcl.yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowd_avoidance/start_amcl.yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'survey_individual')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_individual/start_amcl.yaml"/>
         <arg name="localization_pose_estimate" if="$(eval scenario == 'survey_group')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_group/start_amcl.yaml"/>
+        <arg name="localization_pose_estimate" if="$(eval scenario == 'crowded')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowded/start_amcl.yaml"/>
 
         <arg name="shared_map" value="$(arg shared_map)"/>
         <arg name="tf_world_map" value="$(arg tf_world_map)"/>
@@ -115,6 +119,7 @@
         <arg name="goal_file" if="$(eval scenario == 'crowd_avoidance')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowd_avoidance/finish_pose.yaml"/>
         <!-- in the 'survey_individual' scenario, the goal is published differently (see below) -->
         <arg name="goal_file" if="$(eval scenario == 'survey_group')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/survey_group/finish_pose.yaml"/>
+        <arg name="goal_file" if="$(eval scenario == 'crowded')" value="$(find tiago_social_experiments_sim)/config/aws_hospital/crowded/finish_pose.yaml"/>
     </include>
 
     <!--
@@ -170,6 +175,58 @@
             <remap from="/odom" to="/move_base_controller/odom"/>
             <remap from="/people" to="/people"/>
             <remap from="/move_base_simple/goal" to="/move_base_simple/goal"/>
+        </node>
+    </group>
+
+    <group if="$(eval scenario == 'crowded' and people_sim == true and people_lite == false)">
+        <!-- NOTE: in this scenario, a scripted trajectory of an actor is applied -->
+        <arg name="actor1_name" value="actor1"/>
+        <arg name="actor2_name" value="actor2"/>
+        <!-- Spawn actor in the simulation and let them execute a predefined trajectory (no online motion planning) -->
+        <node type="trajectory_spawner.sh" pkg="hubero_bringup_gazebo_ros" name="$(arg actor1_name)_traj_spawner" ns="$(arg actor1_name)" output="screen"
+            args="$(arg actor1_name) $(find tiago_social_experiments_sim)/config/aws_hospital/crowded/$(arg actor1_name).urdf"
+        />
+        <node type="trajectory_spawner.sh" pkg="hubero_bringup_gazebo_ros" name="$(arg actor2_name)_traj_spawner" ns="$(arg actor2_name)" output="screen"
+            args="$(arg actor2_name) $(find tiago_social_experiments_sim)/config/aws_hospital/crowded/$(arg actor2_name).urdf"
+        />
+        <!-- Publish navigation goal for the robot using an external script -->
+        <node type="publish_goal_at_distance.py" pkg="tiago_social_experiments_sim" name="distance_based_robot_goal_publisher" output="screen"
+            args="$(find tiago_social_experiments_sim)/config/aws_hospital/crowded/finish_pose.yaml"
+            if="$(arg publish_goal)">
+            <!-- node parameters -->
+            <param name="target_human_name" value="0"/>
+            <param name="distance_threshold" value="10.0"/>
+            <!-- exposing topic remappings here -->
+            <remap from="/odom" to="/move_base_controller/odom"/>
+            <remap from="/people" to="/people"/>
+            <remap from="/move_base_simple/goal" to="/move_base_simple/goal"/>
+        </node>
+
+        <!-- Customize HUMAP local planner parameters for this scenario -->
+        <node if="$(eval local_planner == 'humap')" name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam"
+            args="set_from_parameters /move_base/HumapPlannerROS" output="screen" respawn="false"
+        >
+            <!--
+                NOTE: sim_time and sim_granularity affect how the goal pose is reached
+                (these params impact the final part of the path)
+            -->
+            <param name="sim_time" value="+3.5"/>
+            <param name="sim_granularity" value="+0.5"/>
+            <param name="path_distance_scale" value="+11.0"/>
+            <!-- Keepout zone -->
+            <param name="personal_space_scale" value="+70.0"/>
+            <!-- Ground truth perception - if actor2 crosses, let him go -->
+            <param name="path_crossing_confidence_threshold" value="0.45"/>
+            <!-- To reduce computational burden (multiple humans in the scenario) -->
+            <param name="sfm_cn_amplifier_min" value="+2.5"/>
+            <param name="sfm_cn_amplifier_max" value="+2.5"/>
+            <param name="sfm_cn_amplifier_granularity" value="1.0"/>
+            <param name="sfm_bw_amplifier_min" value="+4.5"/>
+            <param name="sfm_bw_amplifier_max" value="+4.5"/>
+            <param name="sfm_bw_amplifier_granularity" value="+1.0"/>
+            <!-- Increase vel. smoothness -->
+            <param name="equisampled_vx" value="6"/>
+            <param name="people_closest_num" value="7"/>
         </node>
     </group>
 </launch>

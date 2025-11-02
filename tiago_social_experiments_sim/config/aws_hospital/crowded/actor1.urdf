@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+<!-- NOTE: SCRIPTDELETE is placed here as it must be deleted from the resultant .xml to be properly loaded by the Gazebo -->
+<SCRIPTDELETE xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:arg name="actor_name" default="actor" />
+    <xacro:property name="actor_name" value="$(arg actor_name)" />
+    <xacro:property name="x_init" value="+5.20" />
+    <xacro:property name="y_init" value="+9.70" />
+    <xacro:property name="yaw_init" value="+3.14" />
+
+    <actor name="${actor_name}">
+      <pose>${x_init} ${y_init} 0 0 0 ${yaw_init}</pose>
+      <!-- defines appearance (colors) -->
+      <skin>
+        <filename>moonwalk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+
+      <animation name="walking">
+        <filename>walk.dae</filename>
+        <scale>1.000000</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>false</loop>
+        <delay_start>0</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <waypoint>
+            <time>0</time>
+            <pose>${x_init} ${y_init-0.1} 0 0 0 ${yaw_init}</pose>
+          </waypoint>
+          <waypoint>
+            <time>11</time>
+            <pose>${x_init} ${y_init} 0 0 0 ${yaw_init}</pose>
+          </waypoint>
+          <waypoint>
+            <time>47</time>
+            <pose>-4.75 ${y_init} 0 0 0 ${yaw_init}</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+</SCRIPTDELETE>
+</sdf>
