@@ -81,7 +81,8 @@
         <arg name="robot_type" value="$(arg robot_type)"/>
 
         <arg name="perception_launch" value="$(arg perception_launch)"/>
-        <arg name="perception_config" value="$(find tiago_social_experiments_sim)/config/012/people_perception_ground_truth_common.yaml"/>
+        <arg name="perception_config" unless="$(eval scenario == 'static')" value="$(find tiago_social_experiments_sim)/config/012/people_perception_ground_truth_common.yaml"/>
+        <arg name="perception_config" if="$(eval scenario == 'static')" value="$(find tiago_social_experiments_sim)/config/012/static/people_perception_ground_truth.yaml"/>
         <arg name="navigation_launch" value="$(arg navigation_launch)"/>
         <arg name="navigation_benchmark" value="$(arg navigation_benchmark)"/>
         <arg name="global_planner" value="$(arg global_planner)"/>
@@ -362,6 +363,25 @@
                 lead to unnecessarily yielding a way to a human once it was already passed (bad extrapolation)
             -->
             <param name="path_crossing_confidence_threshold" value="0.9"/>
+        </node>
+    </group>
+
+    <group if="$(eval scenario == 'dynamic')">
+        <node if="$(eval local_planner == 'humap')" name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam"
+            args="set_from_parameters /move_base/HumapPlannerROS" output="screen" respawn="false"
+        >
+            <!--
+                Assure that the threshold for path crossing detection is pretty high (but not fully disabled).
+                This is due to the SPENCER perception (used during experiments, sometimes poorly working) issues that
+                lead to unnecessarily yielding a way to a human once it was already passed (bad extrapolation)
+            -->
+            <param name="path_crossing_confidence_threshold" value="0.95"/>
+            <!--
+                Do not sick to the global path too much, as it won't handle a dynamic human well
+            -->
+            <param name="path_distance_scale" value="10.0"/>
+            <param name="goal_distance_scale" value="20.0"/>
+            <param name="personal_space_scale" value="45.0"/>
         </node>
     </group>
 </launch>

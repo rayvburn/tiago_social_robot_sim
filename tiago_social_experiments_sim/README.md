@@ -43,12 +43,22 @@ Simulation experiments evaluating the trajectory planners using the [SRPB](https
 
 - static scenario
   ```sh
-  roslaunch tiago_social_experiments_sim 012.launch scenario:=static local_planner:=(eband|dwa|trajectory|teb|hateb|cohan) global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=spencer publish_goal:=true
+  roslaunch tiago_social_experiments_sim 012.launch scenario:=static local_planner:=(eband|dwa|trajectory|teb|hateb|cohan) global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=spencer publish_goal:=true allow_clearing_map_obstacles:=true
+  ```
+
+  ground truth perception:
+  ```sh
+  roslaunch tiago_social_experiments_sim 012.launch scenario:=static local_planner:=humap global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=ground_truth publish_goal:=true allow_clearing_map_obstacles:=true
+  ```
+
+  with extended costmap contexts:
+  ```sh
+  roslaunch tiago_social_experiments_sim 012.launch scenario:=static local_planner:=humap global_planner:=global_planner_contexts costmap_contexts:=social_extended navigation_benchmark:=true perception_launch:=ground_truth publish_goal:=true allow_clearing_map_obstacles:=true
   ```
 
 - dynamic scenario
   ```sh
-  roslaunch tiago_social_experiments_sim 012.launch scenario:=dynamic local_planner:=(eband|dwa|trajectory|teb|hateb|cohan) global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=spencer publish_goal:=true
+  roslaunch tiago_social_experiments_sim 012.launch scenario:=dynamic local_planner:=(eband|dwa|trajectory|teb|hateb|cohan) global_planner:=navfn costmap_contexts:=social navigation_benchmark:=true perception_launch:=spencer publish_goal:=true allow_clearing_map_obstacles:=true
   ```
 
 Goal poses can also be published manually, e.g.:
