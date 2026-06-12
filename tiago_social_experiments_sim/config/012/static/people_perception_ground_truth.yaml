@@ -1,0 +1,28 @@
+model_name_patterns: [
+  "actor"
+]
+
+# Additional transforms to be applied for some specific models
+transforms:
+  # the key here must match the "name patterns" above
+  actor: [
+    # transform is applied to elements one by one; offsets are expressed in global coordinates;
+    # the order of elements is: x, y, z, roll, pitch, yaw
+    +0.0,
+    +0.0,
+    -1.03,
+    -1.5708,
+    +0.0,
+    -1.5708
+  ]
+
+groups:
+  # define names of groups so they can be read as separate ROS parameters (whole dicts cannot be passed as ROS params)
+  names: [
+    "GroupOne"
+  ]
+  # specify names of entities (values) involved in each group (keys)
+  GroupOne: [
+    "actor1",
+    "actor2"
+  ]

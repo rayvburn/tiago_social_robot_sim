@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+<!-- NOTE: SCRIPTDELETE is placed here as it must be deleted from the resultant .xml to be properly loaded by the Gazebo -->
+<SCRIPTDELETE xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:arg name="actor_name" default="actor" />
+    <xacro:property name="actor_name" value="$(arg actor_name)" />
+    <xacro:property name="x_init" value="-4.85" />
+    <xacro:property name="y_init" value="-7.35" />
+    <xacro:property name="yaw_init" value="+1.57" />
+
+    <actor name="${actor_name}">
+      <pose>${x_init} ${y_init} 0 0 0 ${yaw_init}</pose>
+      <!-- defines appearance (colors) -->
+      <skin>
+        <filename>moonwalk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+
+      <!-- camera sensor -->
+      <!-- http://gazebosim.org/tutorials?tut=ros_gzplugins#OpenniKinect -->
+      <link name="camera_link">
+        <sensor name='camera_actor' type='camera'>
+          <!-- CS info: x - side axis, y - height, z - person's nose heading -->
+          <pose>0 0.55 +0.15 0 -1.20 -1.57</pose>
+          <visualize>false</visualize>
+          <update_rate>60</update_rate>
+          <camera>
+            <save enabled="true">
+              <path>/tmp/hospital/camera_actor</path>
+            </save>
+            <horizontal_fov>1.6</horizontal_fov>
+            <image>
+              <width>1920</width>
+              <height>1080</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+          </camera>
+          <always_on>1</always_on>
+        </sensor>
+      </link>
+
+      <animation name="walking">
+        <filename>walk.dae</filename>
+        <scale>1.000000</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>false</loop>
+        <delay_start>0</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <waypoint>
+            <time>0</time>
+            <pose>${x_init} ${y_init-0.1} 0 0 0 ${yaw_init}</pose>
+          </waypoint>
+          <waypoint>
+            <time>10</time>
+            <pose>${x_init} ${y_init} 0 0 0 ${yaw_init}</pose>
+          </waypoint>
+          <waypoint>
+            <time>25</time>
+            <pose>-4.10 +0.00 0 0 0 ${yaw_init}</pose>
+          </waypoint>
+          <waypoint>
+            <time>33</time>
+            <pose>-4.10 +4.00 0 0 0 ${yaw_init-0.2}</pose>
+          </waypoint>
+          <waypoint>
+            <time>38</time>
+            <pose>-1.7 +6.55 0 0 0 ${yaw_init-1.3}</pose>
+          </waypoint>
+          <waypoint>
+            <time>40</time>
+            <pose>-1.7 +6.55 0 0 0 ${yaw_init-2.6}</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+</SCRIPTDELETE>
+</sdf>

@@ -1,0 +1,10 @@
+# normal
+# <arg name="pose_sim" default="-x -3.2 -y 2.3 -z -0.003 -R 0.0 -P 0.0 -Y -3.1415"/>
+{
+  initial_cov_aa: 0.02,
+  initial_cov_xx: 0.01,
+  initial_cov_yy: 0.01,
+  initial_pose_a: -0.005,
+  initial_pose_x: +0.042,
+  initial_pose_y: +0.068,
+}

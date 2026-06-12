@@ -1,0 +1,8 @@
+{
+  initial_cov_aa: 0.06,
+  initial_cov_xx: 0.01,
+  initial_cov_yy: 0.02,
+  initial_pose_a: 1.35698044300,
+  initial_pose_x: 8.31394767761,
+  initial_pose_y: 4.00566530228
+}

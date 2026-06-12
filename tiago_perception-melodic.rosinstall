@@ -1,0 +1,4 @@
+# valid for e.g. ROS Melodic running at Ubuntu 18.04
+#
+# ground truth data based on ModelStates from the Gazebo simulator
+- git: {local-name: people_extraction, uri: 'https://github.com/rayvburn/people_extraction.git', version: 'devel'}

@@ -1,0 +1,92 @@
+model_name_patterns: [
+  "actor1",
+  "actor2"
+]
+
+link_name_patterns: [
+  "Scrubs",
+  "PatientWheelChair",
+  "MaleVisitorSit",
+  "MaleVisitorOnPhone",
+  "VisitorKid",
+  "FemaleVisitor",
+  "Male01"
+]
+
+# Additional transforms to be applied for some specific models
+transforms:
+  # the key here must match the "name patterns" above
+  actor1: [
+    # transform is applied to elements one by one; offsets are expressed in global coordinates;
+    # the order of elements is: x, y, z, roll, pitch, yaw
+    +0.0,
+    -0.35,
+    -1.03,
+    -1.5708,
+    +0.0,
+    -1.5708
+  ]
+  actor2: [
+    +0.0,
+    -0.2,
+    -1.03,
+    -1.5708,
+    +0.0,
+    -1.5708
+  ]
+  # transforms for objects different than the 'actor' are only needed due to map and TF world->map inaccuracies (?)
+  Scrubs: [
+    +0.0,
+    -0.3,
+    +0.0,
+    +0.0,
+    +0.0,
+    +0.0
+  ]
+  PatientWheelChair: [
+    +0.0,
+    -0.1,
+    +0.0,
+    +0.0,
+    +0.0,
+    +0.0
+  ]
+  FemaleVisitor: [
+    +0.1,
+    -0.4,
+    +0.0,
+    +0.0,
+    +0.0,
+    -1.5708
+  ]
+  MaleVisitorOnPhone: [
+    +0.0,
+    -0.4,
+    +0.0,
+    +0.0,
+    +0.0,
+    +0.0
+  ]
+
+groups:
+  # define names of groups so they can be read as separate ROS parameters (whole dicts cannot be passed as ROS params)
+  names: [
+    "GroupDesk",
+    "GroupElderly",
+    "GroupMiddleOpenSpace"
+  ]
+  # specify names of entities (values) involved in each group (keys)
+  GroupDesk: [
+    "Scrubs_Group_01",
+    "Scrubs_Group_02",
+    "FemaleVisitor_Group_01"
+  ]
+  GroupElderly: [
+    "PatientWheelChair_1",
+    "Scrubs_3"
+  ]
+  GroupMiddleOpenSpace: [
+    "MaleVisitorOnPhone_Group_02",
+    "FemaleVisitor_Group_02",
+    "Male01_Group_02"
+  ]

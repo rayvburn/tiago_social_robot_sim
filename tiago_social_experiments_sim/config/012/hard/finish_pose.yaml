@@ -1,0 +1,18 @@
+# A goal pose shared between the development scenarios (full, hard, short)
+#
+# command line version:
+# "{header: {seq: 0, stamp: now, frame_id: 'map'}, pose: {position: {x: -0.090805888176, y: -1.48610591888, z: 0.0}, orientation: {x: 0.0, y: 0.0, z: -0.597546861609, w: 0.801833990413}}}"
+header:
+  seq: 0,
+  stamp: now
+  frame_id: 'map'
+pose:
+  position:
+    x: -0.163765534759
+    y: -0.781554818153
+    z: 0.0
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: -0.865676401288
+    w: 0.500604003433
